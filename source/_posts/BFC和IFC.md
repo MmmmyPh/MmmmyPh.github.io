@@ -21,25 +21,33 @@ date: 2018-04-20 18:18:50
 
 ## Box(盒)
 
-`Box`是CSS布局的对象和基本单位。
+`Box`是CSS布局的对象和基本单位。CSS的作用对象并不是`document tree`，而是根据`document tree`生成的`render tree`，`Box`就是`render tree`的节点。
 
-CSS的作用对象并不是`document tree`，而是根据`document tree`生成的`render tree`，`Box`就是`render tree`的节点。
+直观地说，在CSS2.1中，页面中的每一个DOM元素都可以看成一个`Box`，而`Box`分为三种类型，不同类型的`Box`参与不同的格式化上下文：
 
-直观地说，在CSS2.1中，页面中的每一个元素都可以看成一个`Box`，而`Box`分为 *block-level box* , *inline-level box* 以及 *匿名* 三种,不同类型的`Box`参与不同的格式化上下文。
+- *block-level box:块级盒*
 
-`Box`的类型，由 **元素类型** 以及 **元素的`display`属性** 共同决定。
+- *inline-level box：行内盒*
 
-## Block-level element(块级元素)
+- *匿名盒*
 
-`block-level element`的定义是指那些在源文档中以*块*为视觉格式化的元素（例如：<p\>）。
+Box的类型由下面两个因素共同决定：
 
-`display`属性为：`block`,`list-item`,`table`的元素都会成为一个块级元素。
+- 元素类型
+
+- 元素的`display`属性
+
+## Block-level Element(块级元素)
+
+`block-level element`的定义是指那些在源文档中以 *占有一整行的块* 为视觉格式化的元素（例如：<p\>）。
+
+除了p元素，div元素等默认的块级元素，其他将元素`display`属性为：`block`,`list-item`,`table`的元素都会成为一个块级元素。
 
 ## Block-level Box(块级盒)
 
-`Block-level Boxes`参与`Block Formatting Context`，即参与 `BFC`。
+块级盒参与`Block Formatting Context`，即 `BFC`。
 
-每一个`Block-level element`都会生成一个包含了子`box`及生成内容（generated content），并且参与任何定位方案的`principal block-level box`。
+每一个块级盒都会生成一个包含了子`box`及生成内容（generated content），并且参与任何定位方案的`principal block-level box`。
 
 除了`table box`，`replaced element`，一个`block-level box`也是一个`block container box`。
 
