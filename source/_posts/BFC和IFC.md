@@ -6,7 +6,7 @@ tags:
 date: 2018-04-20 18:18:50
 ---
 
-先整理一下几个常见名词的意义：
+>BFC和IFC属于CSS视觉格式化模型下的概念，其中的名词概念比较多，且容易误解，在此先做一个整理，之后如果有什么新的理解将继续修改。
 
 ## 视觉格式化模型
 
@@ -158,11 +158,13 @@ Box的类型由下面两个因素共同决定：
 
 ### Inline-level Element(行内级元素)
 
-行内级元素的定义是指那些在给定源文档中 *不生成新的内容块的元素*，元素的内容都分散式地排列在行内（例如：p元素里的em元素,行内图片等）。
+行内级元素的定义是指那些在给定源文档中 *不生成新的内容块的元素*，内容都分散式地排列在行内的元素（例如：p元素里的em元素,行内图片等）。
 
-`display`属性为`inline`,`inline-block`,`inline-table`的元素是`inline-level`的。
+`display`属性为`inline`,`inline-block`,`inline-table`的元素是行内级元素。
 
 `inline-level elements`生成 *参与* `Block Formatting Context`的`inline-level boxes`。
+
+>与块级元素一样，元素是否是行内级元素仅是元素本身的属性，并不直接用于格式化上下文的创建或布局。
 
 ### Inline Box(行内盒)
 
@@ -191,3 +193,7 @@ Box的类型由下面两个因素共同决定：
 {% post_link IFC 查看IFC学习笔记 %}
 
 >需要谨记的是：*IFC与BFC,不是某一个具体的元素，也不是一种具体的属性，而是一种环境，一种上下文，一种布局特性。*
+
+## 参考资料
+
+- [MDN视觉格式化模型](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Visual_formatting_model)
