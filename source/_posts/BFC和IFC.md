@@ -9,6 +9,7 @@ date: 2018-04-20 18:18:50
 先整理一下几个常见名词的意义：
 
 ## 视觉格式化模型
+
 视觉格式化模型(visual formatting model)是用来处理文档并将它显示在视觉媒体上的机制，它也是CSS中的一个概念。
 
 视觉格式化模型定义了盒（Box）的生成，盒主要包括了块盒、行内盒、匿名盒（没有名字不能被选择器选中的盒）以及一些实验性的盒（未来可能添加到规范中）。
@@ -17,7 +18,7 @@ date: 2018-04-20 18:18:50
 
 `Formatting Context`指的是页面里的一块渲染区域，这块渲染区域指定了其内部子元素的定位及与其他元素的关系和互相作用的规则，同时也规定了自身对外的布局规则。
 
-常见的`Formatting Context`有 `Block Formatting Context`(CSS2.1),`Inline Formatting Context`(CSS2.1),`GFC`(CSS3),`FFC`(CSS3)
+常见的格式化上下文有 `Block Formatting Context`(CSS2.1),`Inline Formatting Context`(CSS2.1),`GFC`(CSS3),`FFC`(CSS3)。
 
 ## Box(盒)
 
@@ -25,11 +26,11 @@ date: 2018-04-20 18:18:50
 
 直观地说，在CSS2.1中，页面中的每一个DOM元素都可以看成一个`Box`，而`Box`分为三种类型，不同类型的`Box`参与不同的格式化上下文：
 
-- *block-level box:块级盒*
+- block-level box ：块级盒
 
-- *inline-level box：行内盒*
+- inline-level box ：行内盒
 
-- *匿名盒*
+- 匿名盒
 
 Box的类型由下面两个因素共同决定：
 
@@ -41,7 +42,7 @@ Box的类型由下面两个因素共同决定：
 
 `block-level element`的定义是指那些在源文档中以 *占有一整行的块* 为视觉格式化的元素（例如：<p\>）。
 
-除了p元素，div元素等默认的块级元素，其他将元素`display`属性为：`block`,`list-item`,`table`的元素都会成为一个块级元素。
+除了p，div等默认的块级元素，其他将元素`display`属性为：`block`,`list-item`,`table`的元素都会成为一个块级元素。
 
 ## Block-level Box(块级盒)
 
@@ -51,7 +52,7 @@ Box的类型由下面两个因素共同决定：
 
 除了`table box`，`replaced element`，一个`block-level box`也是一个`block container box`。
 
-一个`block container box`是 **只包含`block-level boxes`** 或 **建立一个只包含`inline-level boxes`的`Block Formatting Context`** 两者之一（either...or...）.
+一个`block container box`是 **只包含`block-level boxes`** 或 **建立一个只包含`inline-level boxes`的`Block Formatting Context`** 两者之一（either...or...）。
 
 并不是所有的`block container boxes`都是`block-level boxes`：`non-replaced inline blocks`和`non-replaced table cells`都是`block container boxes`但并不是`block-level boxes`。
 
