@@ -110,4 +110,6 @@ p{line-height:12px; height:30px;}
 
 这样，就算在无法兼容`transform:translate()`的IE8上也能对宽高不固定的弹窗进行居中设置。
 
->[参考链接](https://juejin.im/post/5909db2fda2f60005d2093db)
+>[参考链接1](https://juejin.im/post/5909db2fda2f60005d2093db)
+>[参考链接2](https://segmentfault.com/a/1190000004466536)
+>[参考链接3](https://www.cnblogs.com/fsjohnhuang/p/5259121.html)
