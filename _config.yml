@@ -82,3 +82,9 @@ deploy:
   type: git
   repo: https://github.com/MmmmyPh/MmmmyPh.github.io.git
   branch: master
+
+browsersync:
+  logLevel: "warn"
+  ghostMode:
+    scroll: true
+  instanceName: "uniqueString"
