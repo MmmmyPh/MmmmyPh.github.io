@@ -5,15 +5,9 @@ tags:
   - 学习笔记
 ---
 
-<!-- 要点：
+> 自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。
 
-    回调与Promise缺陷
-
-    函数的暂停与重新启动，函数体内外数据交换，错误处理机制
-
-    thunk函数 -->
-
-> 自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。这次就稍微整理一下。
+**Generator的目的，是让我们能够以更像编写同步代码的方式，完成异步代码的编写，与此同时保证异步动作能够按照我们想要的方式依次进行，且不至于如使用回调函数那般陷入回调地狱。**
 
 # JavaScript异步
 
@@ -82,8 +76,8 @@ Promise的出现就是为了解决这个问题，让代码纵向发展，但是P
 
 # Generator
 
-> Generator出现的目标是用更像同步编程的方式实现异步编程的目标。
-
+> Generator出现的目标是用更像同步编程的方式实现异步编程的目标，更重要的是，Generator可以以同步编程的方式，让异步编程按照我们想要的次序依次进行，即，在前一个异步完成后，再调用后一个异步动作，并同时不至于陷入回调地狱。
+>
 > Generator可以暂停、恢复函数执行，且能够实现函数内外的数据交换和错误处理，这三点一起构成了一个异步编程的完整解决方案。
 
 ## 基本概念与暂停、恢复执行
@@ -225,3 +219,107 @@ result.value.then((data) => {
 逻辑很清晰，但是流程管理看起来很复杂，也会对理解代码造成负担。
 
 # Thunk函数
+
+Thunk函数是对**传名调用**的一个实现：将传入函数的表达式，放入一个临时函数中，再将临时函数传入目标函数中，函数中用到表达式的地方都用调用这个临时函数来替代。
+
+这个临时函数，就是Thunk函数。
+
+在JavaScript是使用传值调用的语言，对于JS来说，Thunk函数替换的是多参数函数，将多参数函数替换成一个只接受回调函数的单参数函数。
+
+## 简单的Thunk函数转换器
+
+将一个多参数函数，转换成一个只接受回调函数的Thunk函数：
+
+```javaScript
+const Thunkify = function(fn) {
+  return function (...args) {
+    return function (callBack) {
+      return fn.call(null, ...args, callBack)
+    }
+  }
+}
+```
+
+## Thunkify模块
+
+有一个现成的Thunkify模块，在之前的简单的Thunk转换函数的基础上还增加了对回调函数调用次数的限制判断，保证回调函数只会执行一次。
+
+```javaScript
+function thunkify(fn) {
+  return function () {
+    // 创建一个数组，用于存放多参数函数除了回调函数以外其他所有函数
+    var args = new Array(arguments.length)
+    // 获取上下文环境，用于后面绑定执行上下文
+    var ctx = this
+
+    // 将函数参数放到数组的对应位置
+    for(var i = 0; i < arguments.length; i++){
+      args[i] = arguments[i]
+    }
+
+    return function (cb) {
+      // 定义一个是否执行的flag
+      var called
+      // 在参数数组中压入回调函数，并用flag保证回调只执行一次
+      args.push(function(){
+        if(call) return
+        called = true
+        cb.apply(null, arguments)
+      })
+
+      // 在try...catch模块中执行函数，捕获错误后也将错误信息传入回调函数中
+      try{
+        fn.apply(ctx, args)
+      }catch (err) {
+        cb(err)
+      }
+    }
+  }
+}
+```
+
+应用：
+
+```javaScript
+function f(a, b, cb){
+  var sum = a + b;
+  cb(sum);
+  cb(sum);
+}
+
+var ft = thunkify(f);
+var print = console.log.bind(console);
+ft(1, 2)(print);
+```
+
+上面那段代码中，只会有一次输出。而如果直接调用函数`f`，则会有两次输出。
+
+## 基于Thunk函数的Generator函数自动流程
+
+一般意义上来说，Thunk函数是没有什么实际作用的，但是当需要对Generator函数进行自动执行的管理时，Thunk函数就有了大用处。例如下面这个按照次序读取文件Generator函数：
+
+```javaScript
+// 模拟文件
+const file = {
+  'file1.txt': "file2.txt",
+  'file2.txt': 'Hello, Generator!'
+};
+
+// 模拟读取文件操作
+function readFile(filename, cb) {
+  setTimeout(function() {
+    cb(null, file[filename]);
+  }, 1000)
+}
+
+// 用之前的thunkify模块将 readFile 函数转化为一个 Thunk 函数
+const readFileThunk = thunkify(readFile)
+
+function* readGen() {
+  // 读取 file1 的内容
+  const f1 = yield readFile('file1.text')
+  // 用读取到的 file1 内容作为下一个文件名，读取 file2 的内容
+  const f2 = yield readFile(f1)
+  console.log(f2)
+}
+```
