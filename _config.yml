@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Blog der Nachteule
+title: Nachteule
 subtitle:
 description:
 keywords:
@@ -83,8 +83,8 @@ deploy:
   repo: https://github.com/MmmmyPh/MmmmyPh.github.io.git
   branch: master
 
-browsersync:
-  logLevel: "warn"
-  ghostMode:
-    scroll: true
-  instanceName: "uniqueString"
+# browsersync:
+#   logLevel: "warn"
+#   ghostMode:
+#     scroll: true
+#   instanceName: "uniqueString"
