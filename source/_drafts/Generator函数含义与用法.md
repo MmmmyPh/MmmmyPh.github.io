@@ -7,7 +7,7 @@ tags:
 
 > 自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。
 
-**Generator的目的，是让我们能够以更像编写同步代码的方式，完成异步代码的编写，与此同时保证异步动作能够按照我们想要的方式依次进行，且不至于如使用回调函数那般陷入回调地狱。**
+**Generator的目的，是让我们能够以更像编写同步代码的方式，完成异步代码的编写，与此同时，相比回调函数和Promise，Generator最大的优势是，在处理多个串行异步任务时，能够保证异步动作能够按照我们想要的方式依次进行，又不至于如使用回调函数那般陷入回调地狱。**
 
 # JavaScript异步
 
@@ -257,6 +257,13 @@ function thunkify(fn) {
       args[i] = arguments[i]
     }
 
+    // fn.apply(ctx, args)
+    // 对fn的执行函数不能放在这里
+    // 因为对于异步任务，回调函数只有在主线程有空了的情况下才会执行，所以当fn.apply()放在这里，
+    // 异步函数能够确保流程控制函数被作为回调函数的内容注入后，回调函数才会执行
+    // 而同步函数则不能，传给同步函数的回调函数，会在流程控制函数注入前就立刻执行，之后再注入控制函数就实效了
+    // 因此要将异步任务的执行时机延后
+
     return function (cb) {
       // 定义一个是否执行的flag
       var called
@@ -269,6 +276,7 @@ function thunkify(fn) {
 
       // 在try...catch模块中执行函数，捕获错误后也将错误信息传入回调函数中
       try{
+        // 整个函数的执行被定义在传入了回调函数之后，这是为了兼容Thunk化的同步任务
         fn.apply(ctx, args)
       }catch (err) {
         cb(err)
@@ -372,6 +380,8 @@ run(genFunc)
 
 基于Promise的自动执行，与基于Thunk函数的类似，只不过，基于Promise的自动执行要求Generator函数中，跟随在`yield`关键字后的异步动作，返回的必须是一个Promise对象，然后不是直接调用回调函数，而是`then`方法，层层回调。
 
-## co模块
+# co模块
 
-[co模块](https://github.com/tj/co)合并了Thunk函数和Promise两种模式，源码还是较为简单的，但是启发很多。
+[co模块](https://github.com/tj/co)合并了Thunk函数和Promise两种模式，源码很精炼，给人启发很多。
+
+立个flag，之后要去再研究研究co的源码，写一些总结。
