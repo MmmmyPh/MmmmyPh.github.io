@@ -41,7 +41,7 @@ fs.readFile('./fs-example.js', function (err, data) {
 ## Promise
 
 ```javaScript
-var readFile = require('fs-readfile-promise');
+let readFile = require('fs-readfile-promise');
 
 readFile(fileA)
 .then(function(data){
@@ -126,11 +126,11 @@ Generator函数内部还可以部署错误处理代码，用来捕获处理**函
 
 ```javaScript
 function* gen(x){
-    try {
-        let y = yield x + 2;
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    let y = yield x + 2;
+  } catch (error) {
+    console.log(error);
+  }
 }
 let g = gen(3)
 g.next()  // {value: 5, done: false}
@@ -173,12 +173,12 @@ g5.next() // {value: 6666, done: false}
 
 ```javaScript
 function* foo() {
-  var x = yield 3
-  var y = x.toUpperCase()
+  let x = yield 3
+  let y = x.toUpperCase()
   yield y
 }
 
-var it = foo()
+let it = foo()
 
 it.next(); // {value:3, done: false}
 
@@ -282,13 +282,13 @@ function thunkify(fn) {
 
 ```javaScript
 function f(a, b, cb){
-  var sum = a + b;
+  let sum = a + b;
   cb(sum);
   cb(sum);
 }
 
-var ft = thunkify(f);
-var print = console.log.bind(console);
+let ft = thunkify(f);
+let print = console.log.bind(console);
 ft(1, 2)(print);
 ```
 
@@ -296,7 +296,9 @@ ft(1, 2)(print);
 
 ## 基于Thunk函数的Generator函数自动流程
 
-一般意义上来说，Thunk函数是没有什么实际作用的，但是当需要对Generator函数进行自动执行的管理时，Thunk函数就有了大用处。例如下面这个按照次序读取文件Generator函数：
+一般意义上来说，Thunk函数是没有什么实际作用的，但是当需要对Generator函数进行自动执行的管理时，Thunk函数就有了大用处。
+
+例如下面这个按照次序读取文件Generator函数：
 
 ```javaScript
 // 模拟文件
@@ -323,3 +325,53 @@ function* readGen() {
   console.log(f2)
 }
 ```
+
+手动执行上面这个Generator函数：
+
+```javaScript
+let read = readGen()
+let file1 = read.next()
+
+file1.value(function (err, data){
+  if(err) throw err
+  let file2 = read.next(data)
+  file2.value(function (err, data){
+    if(err) throw err
+    read.next(data)
+  })
+})
+```
+
+仔细观察上面手动执行的逻辑：对整个Generator函数的调用执行的过程，就是向`read.next`调用返回的`value`属性（由于`readFile`函数经过Thunk转换，调用返回的是一个函数）传入同一个回调函数的过程。
+
+那么，在此基础上，就可以进行自动执行逻辑的编写了：
+
+```javaScript
+function run(gen) {
+  let g = gen()
+
+  function next(err, data) {
+    let result = g.next()
+    if(result.done) return
+    result.value(next)
+  }
+
+  next()
+}
+
+function* genFunc(){
+  ...
+}
+
+run(genFunc)
+```
+
+**注意：能够使用自动执行模块的Generator函数，其内部包含的异步函数，都需要经过Thunk化转化为一个Thunk函数：执行一次后返回一个接收回调函数的函数。**
+
+## 基于Promise的自动执行
+
+基于Promise的自动执行，与基于Thunk函数的类似，只不过，基于Promise的自动执行要求Generator函数中，跟随在`yield`关键字后的异步动作，返回的必须是一个Promise对象，然后不是直接调用回调函数，而是`then`方法，层层回调。
+
+## co模块
+
+[co模块](https://github.com/tj/co)合并了Thunk函数和Promise两种模式，源码还是较为简单的，但是启发很多。
