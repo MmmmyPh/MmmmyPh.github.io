@@ -1,0 +1,12 @@
+---
+title: react草稿
+tags:
+---
+
+## 父子组件更新
+
+只要父组件的render了，那么默认情况下就会触发子组件的render过程，子组件的render过程又会触发它的子组件的render过程，一直到React元素（即jsx中的<div>这样的元素）。当render过程到了叶子节点，即React元素的时候，diff过程便开始了，这时候diff算法会决定是否切实更新DOM元素。
+
+你可能会觉得这样不是很傻吗，我又没有传递属性给子组件，那父组件更新会触发所有后代组件的重渲染过程不是很低效且没有意义吗？但是React不能检测到你是否给子组件传了属性，所以它必须进行这个重渲染过程（术语叫做reconciliation）。但是这不会使得react有多低效，因为reconciliation过程是执行的JavaScript，而重渲染的性能开销主要是更新DOM导致的，最后diff算法会介入，决定是否要真正更新DOM，JavaScript的执行速度很快的，所以即使父组件render会触发所有后代组件的render过程(reconciliation过程)，这个效率也不会有太大影响。
+
+当然，从道理上讲，既然我没有给子组件传递属性，或者我的程序能够判断出传递的属性并没有发生变化，那么自然无需进行子组件的reconciliation过程。但是react无法自动检测这一点，于是它提供了shouldComponentUpdate回调函数，让程序员根据情况决定是否决定是否要重render本组件。如果某个组件的shouldComponentUpdate总是返回false, 那么当它的父组件render了，会触发该组件的render过程，但是进行到shouldComponentUpdate判断时会被阻止掉，从而就不调用它的render方法了，它自己下面的组件的render过程压根也不会触发了。
