@@ -64,4 +64,19 @@ const curry = (fn, arr = []) => (...args) => (
 
 ## 带有占位符功能的柯里化函数
 
+上面的柯里化函数可以很好的处理参数从左至右依次传入的情况，但是如果想要在某些位置的参数未知的情况下，传入它后面的参数，那么我们需要在上面的基础上，增加一个占位符。
+
+```JavaScript
+function curry(fn, args, vacants, placeholder) {
+  placeholder = placeholder || {}
+  var length = fn.length
+  args = args || []
+  vacants = vacants || []
+
+  return function () {
+    
+  }
+}
+```
+
 # 柯里化函数的作用
