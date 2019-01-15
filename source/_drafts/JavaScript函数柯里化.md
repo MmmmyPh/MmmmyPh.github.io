@@ -30,7 +30,7 @@ tags:
 
 # JavaScript实现的柯里化
 
-按照定义，对一个多参数函数进行柯里化后，返回的是一系列单参数函数,每次传入一个参数进行调用，到最后返回多参数函数执行的结果。
+按照定义，对一个多参数函数进行柯里化后，返回的是一系列单参数函数,每次传入一个参数进行调用，直到最后返回多参数函数执行的结果。
 
 那么可以知道，在调用这个柯里化后的单参数函数到一定次数（多参数函数的参数个数）之前，函数返回的都是一个新的函数，这就很明显需要用到递归。
 
@@ -46,6 +46,7 @@ var curry = function (fn, arr) {
   return function () {
     args = args.concat(slice.call( arguments))
     if(args.length < length){
+      // 如果柯里化后的函数调用使用参数不足原函数所需参数数量，继续返回一个柯里化函数
       return curry(fn, args)
     }else {
       return fn.apply(null, args)
@@ -60,3 +61,7 @@ const curry = (fn, arr = []) => (...args) => (
     : curry(fn, ..arg)
 )([...arr, ...args])
 ```
+
+## 带有占位符功能的柯里化函数
+
+# 柯里化函数的作用
