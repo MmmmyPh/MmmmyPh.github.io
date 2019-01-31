@@ -94,10 +94,10 @@ theme: next
 #     at maybeClose (internal/child_process.js:962:16)
 #     at Process.ChildProcess._handle.onexit (internal/child_process.js:251:5)
 
-# 修改  repo: https://<用户名>:<密码>@github.com/MmmmyPh/MmmmyPh.github.io.git，然后进行发布，发布后删除即可
+# 用HTTPS链接repo时，可以修改  repo: https://<用户名>:<密码>@github.com/MmmmyPh/MmmmyPh.github.io.git，然后进行发布，发布后删除即可
 deploy:
   type: git
-  repo: https://github.com/MmmmyPh/MmmmyPh.github.io.git
+  repo: git@github.com:MmmmyPh/MmmmyPh.github.io.git
   branch: master
 
 # browsersync:
