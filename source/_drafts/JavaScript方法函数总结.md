@@ -81,3 +81,54 @@ export const depthOf = obj => {
   return level;
 };
 ```
+
+# 临时记录
+
+## transduce
+
+```JavaScript
+const isEven = num => num % 2 === 0;
+const triple = num => num * 3;
+
+const genNumArr = (length, limit) => Array.from({ length }, _ => Math.floor(Math.random() * limit));
+
+const bigNum = genNumArr(1e6, 100);
+
+const filter = judgeFunc => reducer => ( acc, value ) => judgeFunc( value ) ? reducer( acc, value ) : acc;
+
+const map = f => reducer => ( acc, value ) => reducer( acc, f( value ) );
+
+const pipe = ( ...fns ) => ( ...args ) => fns.reduce( ( fx, fy ) => fy( fx ), ...args );
+
+const pushReducer = (acc, value) => (acc.push(value), acc);
+
+// 解析：
+bigNum.reduce(map(triple)(filter(isEven)(pushReducer)), []);
+
+// 其中的reduce的callback：
+(acc, value) => {
+	return filter(isEven)(pushReducer)(acc, triple(value))
+}
+//==>
+(acc, value) => {
+	return ((acc, value) => {
+		if(isEven(value)) return pushReducer(acc, value)
+		return acc
+	})(acc, triple(value))
+}
+//==>
+(acc, value) => {
+	let newValue = triple(value)
+	if(isEven(newValue)) return pushReducer(acc, newValue)
+	return acc
+}
+
+// 采用了pipe也是一样的执行顺序，先map,再filter
+bigNum.reduce(
+  pipe(
+    filter(isEven),
+    map(triple)
+  )(pushReducer),
+  []
+);
+```
