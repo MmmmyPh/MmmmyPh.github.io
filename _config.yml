@@ -39,10 +39,10 @@ post_asset_folder: true
 relative_link: false
 future: true
 highlight:
-  enable: true
-  line_number: true
-  auto_detect: false
-  tab_replace:
+  enable: false
+  # line_number: true
+  # auto_detect: false
+  # tab_replace:
   
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
@@ -105,3 +105,20 @@ deploy:
 #   ghostMode:
 #     scroll: true
 #   instanceName: "uniqueString"
+prism_plus:
+  enable: true
+  vendors:
+    base_url: https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/
+    prism:
+      - prism.min.js
+      - components/prism-less.min.js
+      - components/prism-jsx.min.js
+      - components/prism-tsx.min.js
+      - components/prism-markdown.min.js
+      - plugins/line-highlight/prism-line-highlight.min.js
+      - plugins/highlight-keywords/prism-highlight-keywords.min.js
+    prism_css:
+      - themes/prism.min.css
+      - plugins/line-highlight/prism-line-highlight.min.css
+  default_preset:
+    lineno: false
