@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_128.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16.png?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这段时间在公司接手了一个新的项目，但是一来由于这个项目最初是另一个项目组的大佬临时加急搭起来的，二来整个文件的结构跟我习惯的不一样，写起来很别扭。再就是项目刚开始，整体代码不多，是个重构的好机会。所以就有了这一次的重构，在此记录一下这次重构里面遇到的一些事情，万一以后用到。">
+<meta name="keywords" content="JavaScript,React,Redux,随记,create-react-app,redux-saga,react-app-rewired">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次项目重构">
+<meta property="og:url" content="http://yoursite.com/2018/09/23/记一次项目重构/index.html">
+<meta property="og:site_name" content="Nachteule">
+<meta property="og:description" content="这段时间在公司接手了一个新的项目，但是一来由于这个项目最初是另一个项目组的大佬临时加急搭起来的，二来整个文件的结构跟我习惯的不一样，写起来很别扭。再就是项目刚开始，整体代码不多，是个重构的好机会。所以就有了这一次的重构，在此记录一下这次重构里面遇到的一些事情，万一以后用到。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-23T09:37:20.872Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记一次项目重构">
+<meta name="twitter:description" content="这段时间在公司接手了一个新的项目，但是一来由于这个项目最初是另一个项目组的大佬临时加急搭起来的，二来整个文件的结构跟我习惯的不一样，写起来很别扭。再就是项目刚开始，整体代码不多，是个重构的好机会。所以就有了这一次的重构，在此记录一下这次重构里面遇到的一些事情，万一以后用到。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/23/记一次项目重构/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>记一次项目重构 | Nachteule</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.css'><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nachteule</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/23/记一次项目重构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="摩西小海员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nachteule">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">记一次项目重构
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-23 21:57:43" itemprop="dateCreated datePublished" datetime="2018-09-23T21:57:43+08:00">2018-09-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-23 17:37:20" itemprop="dateModified" datetime="2019-07-23T17:37:20+08:00">2019-07-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>这段时间在公司接手了一个新的项目，但是一来由于这个项目最初是另一个项目组的大佬临时加急搭起来的，二来整个文件的结构跟我习惯的不一样，写起来很别扭。再就是项目刚开始，整体代码不多，是个重构的好机会。<br>所以就有了这一次的重构，在此记录一下这次重构里面遇到的一些事情，万一以后用到。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="create-react-app"><a href="#create-react-app" class="headerlink" title="create-react-app"></a>create-react-app</h2><p>图个方便用现成脚手架来搭建，比较了一下dva和create-react-app以后，还是决定用create-react-app。</p>
+<p>主要是dva提供的redux-saga的写法跟我所期望的不大相同，所以为了更高的自由度，还是选择了create-react-app,虽然这个的自由度也不咋高。</p>
+<h3 id="安装使用"><a href="#安装使用" class="headerlink" title="安装使用"></a>安装使用</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">yarn global add create-react-app
+create-react-app app
+cd app
+yarn start
+</code></pre>
+<p>目前cli版本 1.5.2,生成的目录如下：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-clike">app
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   └── manifest.json
+└── src
+    ├── App.css
+    ├── App.js
+    ├── App.test.js
+    ├── index.css
+    ├── index.js
+    ├── logo.svg
+    └── registerServiceWorker.js
+</code></pre>
+<p>然后经过一番魔改后目录变成了下面这样：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-clike">app
+├── README.md
+├── node_modules
+├── .gitignore #git忽略配置文件
+├── theme.js #重置antd默认样式valuables
+├── package.json #依赖及配置文件
+├── config-overrides.js #对create-react-app脚手架的webpack的重写覆盖
+└── src
+  ├── images #图片文件，子结构以模块&#x2F;组件划分子文件夹
+  ├── styles #样式文件，子结构以组件划分子文件，以路由模块划分子文件夹
+  └── scripts #JS&#x2F;JSX文件
+        ├── components #公共组件
+        ├── const #公共静态文件或配置文件
+        ├── models #redux数据
+        |      ├── actions #redux actions文件
+        |      |      ├── index.js #actions聚合文件
+        |      |      └── ***.js #根据模块划分的action types 及 action creators
+        |      ├── reducers #redux reducer文件
+        |      |      ├── index.js #reducer聚合文件
+        |      |      └── ***.js #根据模块划分的reducers
+        |      ├── sagas #redux saga文件
+        |      |      ├── index.js #sagas聚合文件
+        |      |      └── ***.js #根据模块划分的sagas
+        |      └── store
+        |             ├── index.js #根据dev&#x2F;prod环境输出store
+        |             ├── dev.js #dev模式下store
+        |             └── prod.js #prod模式下store
+        ├── pages #根据路由划分的页面模块
+        |      ├── PageModule #事业部模块
+        |      |      ├── index.js #模块Container组件，负责与redux进行store的connect，接收store中的数据，actions触发调用
+        |      |      └── ***.js #模块Presentational组件，从Container接收props进行渲染，并负责维护只与自身相关的state
+        |      └── ...其余类似
+        ├── remotes #数据相关聚合
+        |      ├── urls #各个页面模块请求url路径
+        |      |      ├── user.js #user模块url路径聚合
+        |      |      └── ...其余模块与user模块类似
+        |      ├── index.js #请求调用函数，请求错误处理函数
+        ├── routes #路由聚合
+        |      ├── HomeRoutes.js #登录后home页面路由
+        |      └── index.js #路由入口,区分登录页与home模块
+        ├── utils #方法函数聚合
+        |      ├── index.js #各种方法函数的聚合与统一导出
+        |      ├── type.js #变量check方法函数
+        |      ├── storage.js #对localStorage的操作方法，在原生localStorage方法的一些扩展
+        |      ├── redux.js #redux相关方法函数
+        |      ├── react.js #与react及reactDOM相关的方法函数
+        |      └── object.js #处理类型为Object的变量的相关方法
+        └── App.js #应用入口
+</code></pre>
+<p>主要有这么几点：</p>
+<ol>
+<li><p>Redux相关的文件放在models文件夹下，并且划分成 <code>actions</code>,<code>sagas</code>,<code>reducers</code>三个小的模块，每个模块下根据页面模块不同有自己独立的代码文件。</p>
+</li>
+<li><p>每一个页面模块下的组件分为两种</p>
+<ul>
+<li><p>Container组件</p>
+</li>
+<li><p>Presentational组件</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="react-app-rewired"><a href="#react-app-rewired" class="headerlink" title="react-app-rewired"></a>react-app-rewired</h2><p>CRA脚手架提供的webpack包括devServer配置不一定完全符合项目或者个人的需求，所以需要一定程度上对配置的重写或覆盖。</p>
+<p>官方给了一个方法：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn run eject
+</code></pre>
+<p>eject方法把CRA封装的webpack配置暴露到根目录来，但是这样一来如果之后<code>react-scripts</code>升级了就无法跟随升级。另外就是还想尝试一下新东西，所以用了<code>react-app-rewired</code>来进行新的覆盖配置。</p>
+<ol>
+<li>安装</li>
+</ol>
+
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn add react-app-rewired
+</code></pre>
+<ol start="2">
+<li>在根目录新建<code>config-overrides.js</code>文件</li>
+</ol>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">&#x2F;* config-overrides.js *&#x2F;
+module.exports = function override(config, env) {
+  &#x2F;&#x2F;do stuff with the webpack config...
+  return config;
+}
+</code></pre>
+<ol start="3">
+<li>再<code>package.json</code>中修改<code>scripts</code>字段</li>
+</ol>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JSON">  &#x2F;* package.json *&#x2F;
+  &quot;scripts&quot;: {
+-   &quot;start&quot;: &quot;react-scripts start&quot;,
++   &quot;start&quot;: &quot;react-app-rewired start&quot;,
+-   &quot;build&quot;: &quot;react-scripts build&quot;,
++   &quot;build&quot;: &quot;react-app-rewired build&quot;,
+-   &quot;test&quot;: &quot;react-scripts test --env=jsdom&quot;,
++   &quot;test&quot;: &quot;react-app-rewired test --env=jsdom&quot;
+}
+</code></pre>
+<ol start="4">
+<li>按照 CRA 的方式，用 <code>yarn start</code>,<code>yarn build</code>等方式正常启动或构建</li>
+</ol>
+<h2 id="rewire-webpack配置"><a href="#rewire-webpack配置" class="headerlink" title="rewire webpack配置"></a>rewire webpack配置</h2><p>上面的都安排好后，就剩下针对项目需要进行特定的webpack配置了，以下配置都在<code>config-overrides.js</code>文件中进行</p>
+<h3 id="添加less支持"><a href="#添加less支持" class="headerlink" title="添加less支持"></a>添加<code>less</code>支持</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn add --dev react-app-rewire-less-modules
+</code></pre>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">const rewireLess = require(&quot;react-app-rewire-less-modules&quot;);
+
+module.exports = function override(config, env) {
+  config = rewireLess(config, env);
+  &#x2F;&#x2F; other rewires...
+  return config;
+};
+</code></pre>
+<h3 id="添加antd按需加载支持"><a href="#添加antd按需加载支持" class="headerlink" title="添加antd按需加载支持"></a>添加<code>antd</code>按需加载支持</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn add react-app-rewire-import --dev
+</code></pre>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">const rewireImport = require(&#39;react-app-rewire-import&#39;);
+const rewireLess = require(&quot;react-app-rewire-less-modules&quot;);
+
+module.exports = function override (config, env) {
+  config = rewireLess.withLoaderOptions( {
+    modifyVars: Object.assign( {}, theme ),
+    javascriptEnabled: true
+  } )( config, env );  
+
+  config = injectBabelPlugin(
+    [ &#39;import&#39;, { libraryName: &#39;antd&#39;, libraryDirectory: &#39;es&#39;, style: true } ],
+    config
+  );
+
+  &#x2F;&#x2F; other rewires...
+  return config;
+}
+</code></pre>
+<p>这里面的 <code>theme</code>是放在根目录下的<code>theme.js</code>，用来修改<code>antd</code>中内置的样式<code>variables</code></p>
+<h3 id="添加异步import-支持"><a href="#添加异步import-支持" class="headerlink" title="添加异步import()支持"></a>添加异步<code>import()</code>支持</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn add babel-plugin-syntax-dynamic-import
+</code></pre>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">const rewireLess = require(&quot;react-app-rewire-less-modules&quot;);
+
+module.exports = function override(config, env) {
+  config = injectBabelPlugin( &#39;babel-plugin-syntax-dynamic-import&#39;, config );
+  &#x2F;&#x2F; other rewires...
+  return config;
+};
+</code></pre>
+<p>这里安装的还是6.18.0版本的<code>babel-plugin-syntax-dynamic-import</code>，因为当前<code>react-scripts</code>当前版本还没有支持babel 7， 虽然说<code>next</code>分支里已经支持了babel 7，但是还是没有特地去clone一份next版本来自己进行扩展。</p>
+<p>引入<code>import()</code>的支持，是为了在<code>react-router</code> 4下用<code>react-loadable</code>进行代码分割。</p>
+<h3 id="添加react-hot-loader支持"><a href="#添加react-hot-loader支持" class="headerlink" title="添加react-hot-loader支持"></a>添加<code>react-hot-loader</code>支持</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-clike">yarn add -dev react-app-rewire-hot-loader
+yarn add -dev react-hot-loader
+</code></pre>
+<ol>
+<li><code>config-overrides.js</code>文件</li>
+</ol>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">const rewireReactHotLoader = require(&#39;react-app-rewire-hot-loader&#39;)
+
+module.exports = function override (config, env) {
+  config = rewireReactHotLoader(config, env)
+  return config
+}
+</code></pre>
+<ol start="2">
+<li><code>App.js</code>文件，v4写法</li>
+</ol>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">import React from &#39;react&#39;
+import { hot } from &#39;react-hot-loader&#39;
+
+const App = () =&gt; &lt;div&gt;Hello World!&lt;&#x2F;div&gt;
+
+export default hot(module)(App)
+</code></pre>
+<h3 id="配置alias"><a href="#配置alias" class="headerlink" title="配置alias"></a>配置<code>alias</code></h3>
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">module.exports = function override(config, env) {
+  config.resolve = Object.assign( {}, config.resolve, {
+    alias: {
+      scripts: path.resolve( __dirname, &#39;src&#x2F;scripts&#39; ),
+      styles: path.resolve( __dirname, &#39;src&#x2F;styles&#39; ),
+      images: path.resolve( __dirname, &#39;src&#x2F;images&#39; ),
+      routes: path.resolve( __dirname, &#39;src&#x2F;scripts&#x2F;routes&#39; ),
+      pages: path.resolve( __dirname, &#39;src&#x2F;scripts&#x2F;pages&#39; ),
+      components: path.resolve( __dirname, &#39;src&#x2F;scripts&#x2F;components&#39; ),
+      utils: path.resolve( __dirname, &#39;src&#x2F;scripts&#x2F;utils&#39; ),
+      models: path.resolve( __dirname, &#39;src&#x2F;scripts&#x2F;models&#39; ),
+    }
+  } );
+  &#x2F;&#x2F; other rewires...
+  return config;
+};
+</code></pre>
+<p>为了方便开发时候写引用地址，配置<code>alias</code>。其他webpack配置也都大致可以这样进行配置。</p>
+<h3 id="开发模式请求proxy"><a href="#开发模式请求proxy" class="headerlink" title="开发模式请求proxy"></a>开发模式请求<code>proxy</code></h3><p>按照CRA官方文档，开发模式下添加网络请求的<code>proxy</code>需要在<code>package.json</code>中增加<code>proxy</code>字段：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JSON">{
+  &#x2F;&#x2F; ...
+  &quot;proxy&quot;: &quot;http:&#x2F;&#x2F;**.**.**.**:****&quot;
+  &#x2F;&#x2F; ...
+}
+</code></pre>
+<p>或者：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JSON">{
+  &#x2F;&#x2F; ...
+  &quot;proxy&quot;: {
+    &#x2F;&#x2F; Matches any request starting with &#x2F;api
+    &quot;&#x2F;api&quot;: {
+      &quot;target&quot;: &quot;&lt;url_1&gt;&quot;,
+      &quot;ws&quot;: true
+      &#x2F;&#x2F; ...
+    },
+    &#x2F;&#x2F; Matches &#x2F;bar&#x2F;abc.html but not &#x2F;bar&#x2F;sub&#x2F;def.html
+    &quot;&#x2F;bar&#x2F;[^&#x2F;]*[.]html&quot;: {
+      &quot;target&quot;: &quot;&lt;url_3&gt;&quot;,
+      &#x2F;&#x2F; ...
+    },
+    &#x2F;&#x2F; Matches &#x2F;baz&#x2F;abc.html and &#x2F;baz&#x2F;sub&#x2F;def.html
+    &quot;&#x2F;baz&#x2F;.*&#x2F;.*[.]html&quot;: {
+      &quot;target&quot;: &quot;&lt;url_4&gt;&quot;
+      &#x2F;&#x2F; ...
+    }
+  }
+	&#x2F;&#x2F; ...
+}
+</code></pre>
+<p>但是这里又有一个小问题，后端同学配置了3个服务器，想要在不同时候连不同的服务器，但是<code>package.json</code>中不允许使用注释，这就很蛋疼。</p>
+<p>在google以及看了<code>react-scripts</code>源码以后，有了下面这个方法：</p>
+<p>调整整个<code>config-overrides.js</code>的书写方式，不再是只export一个override函数，而是一个由<code>webpack</code>和<code>devServer</code>组成的对象</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-JavaScript">const { prepareProxy } = require( &#39;react-dev-utils&#x2F;WebpackDevServerUtils&#39; );
+const paths = require( &#39;react-scripts&#x2F;config&#x2F;paths&#39; );
+const proxySettings = require( &#39;.&#x2F;proxySettings&#39; );
+
+module.exports = {
+  &#x2F;* rewire webpack *&#x2F;
+  webpack: function(config, dev) {
+    &#x2F;&#x2F; webpack rewire 配置...
+  }，
+  &#x2F;* devServer config *&#x2F;
+  devServer: function ( configFunction ) {
+    return function ( proxy, allowedHost ) {
+      &#x2F;* 用 react-scripts 内部的 prepareProxy 方法来自己手动引入 proxy ，这样就可以在根目录下新建一个 proxySettings 文件，比较灵活了就 *&#x2F;
+      &#x2F;* 方便设置 DEV 环境下的请求 proxy *&#x2F;
+      const customProxy = proxySettings;
+      proxy = prepareProxy( customProxy, paths.appPublic );  
+      const config = configFunction( proxy, allowedHost );
+      return config;
+    };
+  }
+}
+</code></pre>
+<h2 id="生产打包"><a href="#生产打包" class="headerlink" title="生产打包"></a>生产打包</h2><ol>
+<li>项目里用了<code>query-string</code>方法来进行部分数据的解析等，直接用<code>yarn add query-string</code>方法添加的话，目前是6.1.0版本，但是这个版本会导致<code>yarn build</code>失败。解决方法是降级到5.1.1版本。</li>
+</ol>
+<p>剩下的以后想到什么再来加吧。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/React/" rel="tag"># React</a>
+          
+            <a href="/tags/Redux/" rel="tag"># Redux</a>
+          
+            <a href="/tags/随记/" rel="tag"># 随记</a>
+          
+            <a href="/tags/create-react-app/" rel="tag"># create-react-app</a>
+          
+            <a href="/tags/redux-saga/" rel="tag"># redux-saga</a>
+          
+            <a href="/tags/react-app-rewired/" rel="tag"># react-app-rewired</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/30/IFC/" rel="next" title="IFC学习笔记">
+                <i class="fa fa-chevron-left"></i> IFC学习笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/08/CRA2-1-1自定义配置/" rel="prev" title="CRA2.1.1自定义配置">
+                CRA2.1.1自定义配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">摩西小海员</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/MmmmyPh" target="_blank" title="GitHub"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:MmmmyPh@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#create-react-app"><span class="nav-number">1.</span> <span class="nav-text">create-react-app</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装使用"><span class="nav-number">1.1.</span> <span class="nav-text">安装使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#react-app-rewired"><span class="nav-number">2.</span> <span class="nav-text">react-app-rewired</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rewire-webpack配置"><span class="nav-number">3.</span> <span class="nav-text">rewire webpack配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加less支持"><span class="nav-number">3.1.</span> <span class="nav-text">添加less支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加antd按需加载支持"><span class="nav-number">3.2.</span> <span class="nav-text">添加antd按需加载支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加异步import-支持"><span class="nav-number">3.3.</span> <span class="nav-text">添加异步import()支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加react-hot-loader支持"><span class="nav-number">3.4.</span> <span class="nav-text">添加react-hot-loader支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置alias"><span class="nav-number">3.5.</span> <span class="nav-text">配置alias</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开发模式请求proxy"><span class="nav-number">3.6.</span> <span class="nav-text">开发模式请求proxy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生产打包"><span class="nav-number">4.</span> <span class="nav-text">生产打包</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">摩西小海员</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script><!-- hexo-inject:begin --><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-less.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-jsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-tsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-markdown.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/highlight-keywords/prism-highlight-keywords.min.js'></script><!-- hexo-inject:end -->
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

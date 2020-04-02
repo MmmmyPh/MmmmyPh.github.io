@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_128.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16.png?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="BFC和IFC属于CSS视觉格式化模型下的概念，其中的名词概念比较多，且容易误解，在此先做一个整理，之后如果有什么新的理解将继续修改。时常回顾，温故知新">
+<meta name="keywords" content="学习笔记,CSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BFC,IFC学习笔记">
+<meta property="og:url" content="http://yoursite.com/2018/04/20/BFC和IFC/index.html">
+<meta property="og:site_name" content="Nachteule">
+<meta property="og:description" content="BFC和IFC属于CSS视觉格式化模型下的概念，其中的名词概念比较多，且容易误解，在此先做一个整理，之后如果有什么新的理解将继续修改。时常回顾，温故知新">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/04/20/BFC和IFC/venn_blocks.png">
+<meta property="og:updated_time" content="2019-07-23T09:37:20.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BFC,IFC学习笔记">
+<meta name="twitter:description" content="BFC和IFC属于CSS视觉格式化模型下的概念，其中的名词概念比较多，且容易误解，在此先做一个整理，之后如果有什么新的理解将继续修改。时常回顾，温故知新">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/20/BFC和IFC/venn_blocks.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/20/BFC和IFC/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>BFC,IFC学习笔记 | Nachteule</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.css'><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nachteule</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/BFC和IFC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="摩西小海员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nachteule">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">BFC,IFC学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-04-20 18:18:50" itemprop="dateCreated datePublished" datetime="2018-04-20T18:18:50+08:00">2018-04-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-23 17:37:20" itemprop="dateModified" datetime="2019-07-23T17:37:20+08:00">2019-07-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>BFC和IFC属于CSS视觉格式化模型下的概念，其中的名词概念比较多，且容易误解，在此先做一个整理，之后如果有什么新的理解将继续修改。<br>时常回顾，温故知新</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="视觉格式化模型"><a href="#视觉格式化模型" class="headerlink" title="视觉格式化模型"></a>视觉格式化模型</h2><p>视觉格式化模型(visual formatting model)是用来处理和在视觉媒体上显示文档时使用的计算规则，它也是CSS中的一个基础概念。</p>
+<p>视觉格式化模型定义了盒（Box）的生成，盒主要包括了块盒、行内盒、匿名盒（没有名字不能被选择器选中的盒）以及一些实验性的盒（未来可能添加到规范中）。</p>
+<h2 id="Formatting-Context-格式化上下文"><a href="#Formatting-Context-格式化上下文" class="headerlink" title="Formatting Context(格式化上下文)"></a>Formatting Context(格式化上下文)</h2><p><code>Formatting Context</code>指的是页面里的一块渲染区域，这块渲染区域指定了其内部子元素的定位及与其他元素的关系和互相作用的规则，同时也规定了自身对外的布局规则。</p>
+<p>常见的格式化上下文有 <code>Block Formatting Context</code>(CSS2.1),<code>Inline Formatting Context</code>(CSS2.1),<code>GFC</code>(CSS3),<code>FFC</code>(CSS3)。</p>
+<h2 id="Block-块"><a href="#Block-块" class="headerlink" title="Block(块)"></a>Block(块)</h2><p>一个抽象概念，一个快在文档流上占据了一个独立的区域，块与块之间在垂直方向上按照顺序以此堆叠。</p>
+<h2 id="Containing-Block-包含块"><a href="#Containing-Block-包含块" class="headerlink" title="Containing Block(包含块)"></a>Containing Block(包含块)</h2><p>包含其他盒子的块成为包含块。</p>
+<h2 id="Box-盒"><a href="#Box-盒" class="headerlink" title="Box(盒)"></a>Box(盒)</h2><p><code>Box</code>是一个抽象的概念，由CSS引擎根据文档内容创建，是CSS布局的对象和基本单位，用于文档元素的定位、布局和格式化等。盒子与元素并不是一一对应的，有时多个元素会合并生成一个盒子，有时一个元素会生成多个盒子（如匿名盒子）。</p>
+<p>CSS的作用对象并不是<code>document tree</code>，而是根据<code>document tree</code>生成的<code>render tree</code>，<code>Box</code>就是<code>render tree</code>的节点。</p>
+<p>直观地说，在CSS2.1中，页面中的每一个DOM元素都可以看成一个<code>Box</code>，而<code>Box</code>分为三种类型，不同类型的<code>Box</code>参与不同的格式化上下文：</p>
+<ul>
+<li><p>block-level box ：块级盒</p>
+</li>
+<li><p>inline-level box ：行内盒</p>
+</li>
+<li><p>匿名盒</p>
+</li>
+</ul>
+<p>Box的类型由下面两个因素共同决定：</p>
+<ul>
+<li><p>元素类型</p>
+</li>
+<li><p>元素的<code>display</code>属性</p>
+</li>
+</ul>
+<h2 id="Replaced-Element-可替换元素"><a href="#Replaced-Element-可替换元素" class="headerlink" title="Replaced Element(可替换元素)"></a>Replaced Element(可替换元素)</h2><p>可替换元素是一类外观不由CSS控制，外观渲染独立于CSS的外部对象。元素本身并没有实际内容，最终显示的内容及样式，是由浏览器根据元素的某些属性来进行判断。例如<code>&lt;image&gt;</code>的显示内容由<code>src</code>属性决定。</p>
+<p>典型的可替换元素有:  <code>&lt;iframe&gt;</code>、<code>&lt;embed&gt;</code>、<code>&lt;img&gt;</code>、<code>&lt;object&gt;</code>、<code>&lt;video&gt;</code>和表单元素，如<code>&lt;textarea&gt;</code>、<code>&lt;input&gt;</code>。而例如 <code>&lt;audio&gt;</code>、<code>&lt;canvas&gt;</code>、<code>&lt;option&gt;</code>、<code>&lt;option&gt;</code>、<code>&lt;applet&gt;</code> 等某些元素只在一些特殊情况下表现为可替换元素。</p>
+<p>通过<code>CSS content</code>属性来插入的对象,被称作 <strong>匿名可替换元素（anonymous replaced elements）</strong>。</p>
+<blockquote>
+<p>Note: 一部分（并非全部）可替换元素，本身具有尺寸和基线（baseline），会被像vertical-align之类的一些 CSS 属性用到。</p>
+</blockquote>
+<h2 id="Non-replaced-Element-非可替换元素"><a href="#Non-replaced-Element-非可替换元素" class="headerlink" title="Non-replaced Element(非可替换元素)"></a>Non-replaced Element(非可替换元素)</h2><p>大部分的HTML元素都属于费可替换元素。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-HTML">&lt;div&gt;non-replaced element&lt;&#x2F;div&gt;
+&lt;p&gt;non-replaced element&lt;&#x2F;p&gt;
+</code></pre>
+<p>上面的<code>div</code>和<code>p</code>元素称为 <strong>非可替换</strong> 的原因是他们标签里包裹的内容被忠实地呈现在页面上，并没有被别的东西替换。</p>
+<h2 id="Block-level块级相关概念"><a href="#Block-level块级相关概念" class="headerlink" title="Block-level块级相关概念"></a>Block-level块级相关概念</h2><blockquote>
+<p>Note: 盒子分为“块盒子”和“块级盒子”两种，但元素只有“块级元素”，而没有“块元素”。下面的“行内级元素”也是一样。</p>
+</blockquote>
+<h3 id="Block-level-Element-块级元素"><a href="#Block-level-Element-块级元素" class="headerlink" title="Block-level Element(块级元素)"></a>Block-level Element(块级元素)</h3><p><code>block-level element</code>的定义是指那些在源文档中以 <em>占有一整行的块</em> 为视觉格式化的元素（例如：&lt;p>）。</p>
+<p>除了p，div等默认的块级元素，其他将元素<code>display</code>属性为：<code>block</code>,<code>list-item</code>,<code>table</code>的元素都会成为一个块级元素。</p>
+<p>每一个块级元素都会 <strong>至少</strong> 生成一个<code>principal block-level box</code>（主块级盒）, 这个主块级盒包含了子<code>box</code>及生成内容（generated content），并且参与任何定位方案的。</p>
+<blockquote>
+<p>Note 1：有一些元素，比如列表项会生成额外的盒子来放置项目符号，而那些会生成列表项的元素可能会生成更多的盒子。不过，多数元素只生成一个主块级盒子。<br>Note 2: 元素是否是块级元素仅是元素本身的属性，并不直接用于格式化上下文的创建或布局。</p>
+</blockquote>
+<h3 id="Block-level-Box-块级盒"><a href="#Block-level-Box-块级盒" class="headerlink" title="Block-level Box(块级盒)"></a>Block-level Box(块级盒)</h3><p>块级盒由块级元素生成，一个块级元素至少会生成一个块级盒，但是也有可能生成多个（例如列表项元素）。</p>
+<p>块级盒参与<code>Block Formatting Context</code>，即 <code>BFC</code>。</p>
+<h3 id="Block-container-box-Block-containing-box-块容器盒"><a href="#Block-container-box-Block-containing-box-块容器盒" class="headerlink" title="Block container box/Block containing box(块容器盒)"></a>Block container box/Block containing box(块容器盒)</h3><p>根据W3C标准，除去<code>table box</code>，<code>replaced element</code>，一个块级盒就是一个块容器盒。</p>
+<p>块容器盒侧重于当前盒子作为“容器”的角色，它本身不参与当前块的布局和定位，它仅仅描述当前盒子与其后代的关系，也就是说，块容器盒的主要作用是：确定子元素的定位、布局等。</p>
+<p>一个块容器盒可能是下面的两者中的一个：</p>
+<ul>
+<li><p>只包含其他块级盒</p>
+</li>
+<li><p>只包含行内盒并同时创建一个行内格式化上下文（<code>Inline Formatting Context</code>）</p>
+</li>
+</ul>
+<h3 id="Principal-Block-level-Box-主块级盒"><a href="#Principal-Block-level-Box-主块级盒" class="headerlink" title="Principal Block-level Box(主块级盒)"></a>Principal Block-level Box(主块级盒)</h3><p>主块级盒是一个由给定元素生成的，直接受应用到元素的样式规则影响的块级盒。</p>
+<p>每一个块级元素都会至少生成一个块级盒，即主块级盒。大多数的元素只会生成一个盒,那么对于这些元素来说，主块级盒和块级盒是等价的，因为没有涉及到其他的盒。</p>
+<p>然而，根据元素的<code>display</code>属性，一个元素可以生成多个盒，例如：<code>list-item</code>。当对这样的元素进行样式声明时，样式会应用的主块级盒，同时生成的其他的任何盒会在此基础上进行相应的重新渲染。</p>
+<p>举个例子：</p>
+<blockquote>
+<p>CSS 2.1 offers basic visual formatting of lists. An element with ‘display: list-item’ generates a principal block box for the element’s content and, depending on the values of ‘list-style-type’ and ‘list-style-image’, possibly also a marker box as a visual indication that the element is a list item.</p>
+</blockquote>
+<p><code>display:list-item</code>的元素,如果同时声明了<code>list-style-type</code> 或 <code>list-style-image</code>属性，那么除了<code>principal block box</code>之外，还会产生一个<code>marker box</code>来放置项目符号（就是list-item前面的那个黑点）。</p>
+<p>可以通过<code>list properties</code>来影响<code>marker</code>的类型（图片，数字等）及相对<code>principal box</code>的位置（outside 或 inside）</p>
+<p>需要注意的是，这个<code>marker box</code>是<code>principal box</code>的一个子box,因此它会继承应用在<code>principal box</code>上的样式（例如color）,但是无法单独给<code>marker box</code>设置样式以及相对于<code>principal box</code>的定位。</p>
+<p>除了<code>display:table</code>以外的块级盒都会仅仅只生成一个主块级盒，使得对于那些元素来说,他们 <em>只是</em> 块盒。</p>
+<p>因此，所有的主块级盒都是块级盒，但并不是每一个块级盒都是主块级盒（例如：匿名块盒）。并且，行内元素（包括行内块）本身不会生成任何的<code>principal box</code>,也不会有<code>principal inline box</code>这样的东西。</p>
+<h3 id="Anonymous-Block-Box-匿名块盒"><a href="#Anonymous-Block-Box-匿名块盒" class="headerlink" title="Anonymous Block Box(匿名块盒)"></a>Anonymous Block Box(匿名块盒)</h3>
+<!-- Has Prism -->
+<pre class style><code class="language-HTML">&lt;div&gt;
+    Anonymous Block
+    &lt;p&gt;text&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+</code></pre>
+<p>在如同上面一样的结构中，如果一个<code>block container box</code>（上面的div元素）中包含了一个<code>block-level box</code>（上面的p元素）在内，那么我们会<strong>强制认为，这个<code>block container box</code>中， <em>只含有</em> <code>block-level box</code>在内</strong>，并且认定，在文本 “Anonymous Block”周围，存在一个<code>Anonymous Block Box(匿名块盒)</code>（看似是一个<code>inline</code>级别的内容）。</p>
+<p>更多关于匿名块盒，可以参考<a href="https://www.w3.org/TR/CSS21/visuren.html#anonymous-block-level" target="_blank" rel="noopener">规范</a></p>
+<h3 id="块盒、块级盒、块容器盒"><a href="#块盒、块级盒、块容器盒" class="headerlink" title="块盒、块级盒、块容器盒"></a>块盒、块级盒、块容器盒</h3><img src="/2018/04/20/BFC和IFC/venn_blocks.png" title="块盒、块级盒、块容器盒关系">
+<ul>
+<li><p>并不是所有的 <strong>块容器盒</strong> 都是 <strong>块级盒</strong>：<code>non-replaced inline blocks（非替换行内块）</code>和<code>non-replaced table cells（非替换表格单元格）</code>都 <strong>是块容器盒</strong> 但并 <strong>不是块级盒</strong>。</p>
+</li>
+<li><p>并不是 <strong>块级盒</strong> 都是是 <strong>块容器盒</strong> ，比如表格</p>
+</li>
+</ul>
+<p>注意到 <strong>块级盒与块容器盒是不同的</strong> 这一点很重要。</p>
+<ul>
+<li><p><strong>块盒</strong> 描述了元素与其父元素和兄弟元素之间的行为</p>
+</li>
+<li><p><strong>块容器盒</strong> 描述了元素跟其后代之间的行为。</p>
+</li>
+</ul>
+<p><strong>满足块容器盒定义的块级盒被称为 <code>block box(块盒)</code>。</strong></p>
+<p>当含义明确的时候，块级盒、块容器盒、块盒都可以被简单称为<code>Block（块）</code>。</p>
+<h2 id="Inline-level行内级相关概念"><a href="#Inline-level行内级相关概念" class="headerlink" title="Inline-level行内级相关概念"></a>Inline-level行内级相关概念</h2><h3 id="Inline-level-Element-行内级元素"><a href="#Inline-level-Element-行内级元素" class="headerlink" title="Inline-level Element(行内级元素)"></a>Inline-level Element(行内级元素)</h3><p>行内级元素的定义是指那些在给定源文档中 <em>不生成新的内容块的元素</em>，内容都分散式地排列在行内的元素（例如：p元素里的em元素,行内图片等）。</p>
+<p><code>display</code>属性为<code>inline</code>,<code>inline-block</code>,<code>inline-table</code>的元素是行内级元素。</p>
+<p><code>inline-level elements</code>生成 <em>参与</em> <code>Block Formatting Context</code>的<code>inline-level boxes</code>。</p>
+<blockquote>
+<p>与块级元素一样，元素是否是行内级元素仅是元素本身的属性，并不直接用于格式化上下文的创建或布局。</p>
+</blockquote>
+<h3 id="Inline-Box-行内盒"><a href="#Inline-Box-行内盒" class="headerlink" title="Inline Box(行内盒)"></a>Inline Box(行内盒)</h3><p><code>inline box</code>是一个 <em>既是</em> <code>inline-level</code>的, <em>并且</em> 其内容参与由它生成的<code>Block Formatting Context</code>的盒。</p>
+<p>一个<code>display:inline</code>的<code>non-replaced element</code>会生成一个<code>inline box</code>。</p>
+<p>非<code>inline box</code>的<code>inline-level box</code>（例如：<code>replaced inline-level elements</code>, <code>inline-block elements</code>, 以及 <code>inline-table elements</code>）被称作 <code>atomic inline-level box(原子行内级别盒)</code>，这些盒作为 <em>单个不透明盒(single opaque box)</em> 参与他们的<code>Block Formatting Context</code>。</p>
+<h3 id="Anonymous-Inline-Box-匿名行内盒"><a href="#Anonymous-Inline-Box-匿名行内盒" class="headerlink" title="Anonymous Inline Box(匿名行内盒)"></a>Anonymous Inline Box(匿名行内盒)</h3><p>任何被直接放在 <em>块级容器元素</em>（不是 <em>行内元素</em>）内的文本，都必须被视作一个 匿名行内元素(<code>anonymous inline element</code>)。</p>
+<h3 id="Line-Box-行盒"><a href="#Line-Box-行盒" class="headerlink" title="Line Box(行盒)"></a>Line Box(行盒)</h3><p><code>line box</code>是一个由<code>inline-level box</code>在水平方向上排列成行而形成的一个矩形区域。</p>
+<p><strong><code>line box</code>还有很多的特性，随后整理</strong></p>
+<h2 id="BFC"><a href="#BFC" class="headerlink" title="BFC"></a>BFC</h2><a href="/2018/04/30/BFC/" title="查看BFC学习笔记">查看BFC学习笔记</a>
+<h2 id="IFC"><a href="#IFC" class="headerlink" title="IFC"></a>IFC</h2><a href="/2018/04/30/IFC/" title="查看IFC学习笔记">查看IFC学习笔记</a>
+<blockquote>
+<p>需要谨记的是：<em>IFC与BFC,不是某一个具体的元素，也不是一种具体的属性，而是一种环境，一种上下文，一种布局特性。</em></p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Visual_formatting_model" target="_blank" rel="noopener">MDN视觉格式化模型</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+            <a href="/tags/CSS/" rel="tag"># CSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/30/BFC/" rel="prev" title="BFC学习笔记">
+                BFC学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">摩西小海员</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/MmmmyPh" target="_blank" title="GitHub"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:MmmmyPh@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#视觉格式化模型"><span class="nav-number">1.</span> <span class="nav-text">视觉格式化模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Formatting-Context-格式化上下文"><span class="nav-number">2.</span> <span class="nav-text">Formatting Context(格式化上下文)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block-块"><span class="nav-number">3.</span> <span class="nav-text">Block(块)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Containing-Block-包含块"><span class="nav-number">4.</span> <span class="nav-text">Containing Block(包含块)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Box-盒"><span class="nav-number">5.</span> <span class="nav-text">Box(盒)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replaced-Element-可替换元素"><span class="nav-number">6.</span> <span class="nav-text">Replaced Element(可替换元素)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Non-replaced-Element-非可替换元素"><span class="nav-number">7.</span> <span class="nav-text">Non-replaced Element(非可替换元素)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block-level块级相关概念"><span class="nav-number">8.</span> <span class="nav-text">Block-level块级相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Block-level-Element-块级元素"><span class="nav-number">8.1.</span> <span class="nav-text">Block-level Element(块级元素)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Block-level-Box-块级盒"><span class="nav-number">8.2.</span> <span class="nav-text">Block-level Box(块级盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Block-container-box-Block-containing-box-块容器盒"><span class="nav-number">8.3.</span> <span class="nav-text">Block container box/Block containing box(块容器盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Principal-Block-level-Box-主块级盒"><span class="nav-number">8.4.</span> <span class="nav-text">Principal Block-level Box(主块级盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Anonymous-Block-Box-匿名块盒"><span class="nav-number">8.5.</span> <span class="nav-text">Anonymous Block Box(匿名块盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#块盒、块级盒、块容器盒"><span class="nav-number">8.6.</span> <span class="nav-text">块盒、块级盒、块容器盒</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inline-level行内级相关概念"><span class="nav-number">9.</span> <span class="nav-text">Inline-level行内级相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Inline-level-Element-行内级元素"><span class="nav-number">9.1.</span> <span class="nav-text">Inline-level Element(行内级元素)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inline-Box-行内盒"><span class="nav-number">9.2.</span> <span class="nav-text">Inline Box(行内盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Anonymous-Inline-Box-匿名行内盒"><span class="nav-number">9.3.</span> <span class="nav-text">Anonymous Inline Box(匿名行内盒)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Line-Box-行盒"><span class="nav-number">9.4.</span> <span class="nav-text">Line Box(行盒)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BFC"><span class="nav-number">10.</span> <span class="nav-text">BFC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IFC"><span class="nav-number">11.</span> <span class="nav-text">IFC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">12.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">摩西小海员</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script><!-- hexo-inject:begin --><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-less.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-jsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-tsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-markdown.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/highlight-keywords/prism-highlight-keywords.min.js'></script><!-- hexo-inject:end -->
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

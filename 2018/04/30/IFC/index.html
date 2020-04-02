@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_128.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16.png?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="IFC概念阅读理解，里面的弯弯绕还是要时长来看看">
+<meta name="keywords" content="学习笔记,CSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IFC学习笔记">
+<meta property="og:url" content="http://yoursite.com/2018/04/30/IFC/index.html">
+<meta property="og:site_name" content="Nachteule">
+<meta property="og:description" content="IFC概念阅读理解，里面的弯弯绕还是要时长来看看">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/04/30/IFC/img-line-box-width.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/04/30/IFC/img-ifc-0.png">
+<meta property="og:updated_time" content="2019-07-23T09:37:20.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IFC学习笔记">
+<meta name="twitter:description" content="IFC概念阅读理解，里面的弯弯绕还是要时长来看看">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/30/IFC/img-line-box-width.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/30/IFC/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>IFC学习笔记 | Nachteule</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.css'><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nachteule</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/30/IFC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="摩西小海员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nachteule">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IFC学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-04-30 14:33:47" itemprop="dateCreated datePublished" datetime="2018-04-30T14:33:47+08:00">2018-04-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-23 17:37:20" itemprop="dateModified" datetime="2019-07-23T17:37:20+08:00">2019-07-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>IFC概念阅读理解，里面的弯弯绕还是要时长来看看</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="IFC概念与形成"><a href="#IFC概念与形成" class="headerlink" title="IFC概念与形成"></a>IFC概念与形成</h2><p>IFC与BFC一样,不是某一个具体的元素、不是一种具体的属性，而是一种环境、一种格式化上下文、一种布局特性。<code>inline-level</code>的盒子会参与到IFC中。</p>
+<p>在一个IFC中，<code>inline-level</code>的元素在水平方向上一个接一个排列。元素水平方向上的<code>margin</code>,<code>border</code>,<code>padding</code>属性是生效的。在垂直方向上，IFC内部元素的对其方式包括：元素底部，顶部，文本基线等。</p>
+<p>这些<code>inline-level</code>的元素元素排列成行形成的矩形区域被称为 <strong>行盒(<code>line box</code>)</strong>。</p>
+<p><code>line box</code>的宽度，取决于它的 <strong>包含块</strong> 以及 <strong>是否存在<code>float</code>元素</strong>。</p>
+<p><code>line box</code>的高度，由其内部包含的元素中，实际高度最高的元素计算得出。<code>line box</code>的高度足够包裹其内部最高的元素，也有可能比最高的元素还要高（比如内部元素按照 <em>基线</em> 对齐）。</p>
+<p>如果一个<code>line box</code>中的所有<code>inline-level box</code>的宽度和小于<code>line box</code>的宽度，那么这些<code>inline-level box</code>会根据<code>text-align</code>属性来进行水平方向上的对其方式的定位。</p>
+<p>当一个<code>line box</code>无法放下其内部的所有<code>inline-level box</code>，就会产生折行，同时生成一个或者多个新的<code>line box</code>。这些<code>line boxes</code>在垂直方向上进行堆叠，并且没有垂直分隔（如<code>margin-bottom</code>这种，除非有其他的指定）,并且这些<code>line box</code>不会发生重叠。</p>
+<p>通常情况下，<code>line box</code>的左右边界分别接触它的包含块的左右边界，但是如果存在<code>float box</code>，那么这个<code>float box</code>会在<code>line box</code>的边界与包含块的边界之间。同一个IFC下的<code>line boxes</code>可能因为<code>float box</code>的存在导致宽度不同，而高度也可能因为内部元素的高度（比如一个大的img元素）不同而不同。</p>
+<img src="/2018/04/30/IFC/img-line-box-width.jpg" title="同一个IFC下LineBox宽度由于float元素发生的变化">
+<blockquote>
+<p>上图中，由于float的元素存在，同一个IFC下的三个由于文字折行产生的<code>line-box</code>（用蓝色线框框出）的宽度不同</p>
+</blockquote>
+<p>当一个<code>inline box</code>的宽度超出了它所在的<code>line box</code>的宽度，这一个<code>inline box</code>会被分割成多个<code>inline box</code>，并分布在几个不同的<code>line box</code>内。但是如果这个<code>inline box</code>的内容是 <em>一个字符</em>,或是 <em>语言的特定折行规则不允许在<code>inline box</code>内进行折行</em>, 又或是 <em>该<code>inline box</code>的<code>white-space</code>属性为<code>nowrap</code>或<code>pre</code></em>,则此时这个<code>inline box</code>不会折行，而是会在水平方向上溢出<code>line box</code>的范围。</p>
+<p>当一个<code>inline box</code>被分割时，在 <em>分割处</em>，元素的<code>margin</code>,<code>padding</code>,<code>border</code>将不会产生显式效果。</p>
+<p><code>line box</code>的存在条件是: <strong>在IFC中</strong> 并且 <strong>包含inline-level元素</strong> ，如果<code>line box</code>里 <strong>没有文本，空白，换行符，内联元素，也没有其他的存在IFC环境中的元素，(如inline-block，inline- table，images等)</strong> ，将会被视为零高度，也将会被视为没有意义。</p>
+<p>另外，在IFC中是不能存在<code>block-level</code>的元素的，如果将一个<code>block-level</code>元素插入到IFC中,该IFC将会被分割成左右(上下？)两个新的IFC，然后与这个<code>block-level</code>元素垂直排列，亦即表明，IFC对外表现为一个块盒来参与外部的布局。</p>
+<h2 id="line-height"><a href="#line-height" class="headerlink" title="line-height"></a>line-height</h2><p><code>line-height</code>行高字面指的是一行文字的高度。具体的说，就是 <em>两行文字基线之间的距离</em>, 基线指的是小写字母<code>x</code>的下边缘。</p>
+<blockquote>
+<p>在此还要补充一个概念：<code>content area</code>，即内容区域，<code>content area</code>的高度为文字<code>fontSize</code>的一个盒子，是包裹着文字的一个box</p>
+</blockquote>
+<p>简单的理解，可以是下面这个公式：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-clike">lineHeight = fontSize + lineSpace(行间距)
+</code></pre>
+<p>因为根据IFC的定义，<code>line box</code>和<code>line box</code>之间是没有间距的，因此 <em>行间距这个概念其实不是<code>line box</code>之间的间距</em>，而是从直观上我们能看到的两行字中间（只有文本时）的间距。</p>
+<p>那么对于某一个特定特定的<code>line box</code>来说，存在 <em>上行内间距</em> 和 <em>下行内间距</em> ，且相等，都等于 <code>(lineHeight - fontSize) / 2</code>。</p>
+<p>但是有时候<code>line box</code>的高度， <em>会小于</em> <code>content area</code>的高度，亦即 <code>lineHeight &lt; fontSize</code>：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-CSS">p{line-height:12px; height:30px;}
+</code></pre>
+<p>在这种情况下,这个<code>p</code>元素的高度会 <strong>优先计算为<code>line-height</code></strong>，然后，在<code>p</code>元素上加上 <strong>与<code>font-size</code>等值的<code>margin-top</code>和<code>margin-bottom</code></strong>,并且在这种情况下如果文字过多发生折行，由于字体过大，会发生文字重叠。</p>
+<img src="/2018/04/30/IFC/img-ifc-0.png" title="文字发生重叠">
+<p><code>line-height</code>的取值方式有：</p>
+<ul>
+<li><p><code>inherit</code>（默认值）</p>
+<p>  继承父元素的<code>line-height</code>值</p>
+</li>
+<li><p><code>normal</code>（初始值）</p>
+<p>  这个初始值取决于用户代理。桌面浏览器（包括火狐浏览器）使用默认值，约为<code>1.2</code>，这取决于元素的 <code>font-family</code>。</p>
+</li>
+<li><p><code>&lt;number&gt;</code></p>
+<p>  该属性的 <em>应用值</em> 是这个无单位数字<code>&lt;number&gt;</code>乘以该元素的<code>font-size</code>值。计算值与指定值相同。大多数情况下，使用这种方法设置line-height是首选方法，在继承情况下不会有异常的值。</p>
+</li>
+<li><p><code>&lt;length&gt;</code></p>
+<p>  指定<code>&lt;length&gt;</code>用于计算 <code>line box</code> 的高度。就是一般写的<code>20px</code>这种。</p>
+</li>
+<li><p><code>&lt;percentage&gt;</code></p>
+<p>  与元素自身的<code>font-size</code>有关。计算值是给定的百分比值乘以元素计算出的字体大小。</p>
+</li>
+</ul>
+<h2 id="vertical-align"><a href="#vertical-align" class="headerlink" title="vertical-align"></a>vertical-align</h2><p>两个链接：</p>
+<ol>
+<li><p><a href="http://www.zhangxinxu.com/wordpress/2010/05/%E6%88%91%E5%AF%B9css-vertical-align%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%A7%A3%E4%B8%8E%E8%AE%A4%E8%AF%86%EF%BC%88%E4%B8%80%EF%BC%89/" target="_blank" rel="noopener">我对CSS vertical-align的一些理解与认识（一）</a></p>
+</li>
+<li><p><a href="http://www.zhangxinxu.com/wordpress/2010/06/css-vertical-align%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8Btext-top%E7%AF%87/" target="_blank" rel="noopener">CSS vertical-align的深入理解(二)之text-top篇</a></p>
+</li>
+</ol>
+<h2 id="IFC应用"><a href="#IFC应用" class="headerlink" title="IFC应用"></a>IFC应用</h2><p>在处理弹窗的水平垂直居中时，根据IFC可以有这样的处理方式：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-HTML">&lt;div class=&quot;wrap&quot;&gt;
+    &lt;div class=&quot;panel&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+</code></pre>
+
+<!-- Has Prism -->
+<pre class style><code class="language-CSS">.wrap{position:fixed; top:0; right:0; bottom:0; left:0;  background:rgba(0,0,0,0.6); text-align:center;}
+.wrap:before{content:&quot;&quot;;  display:inline-block; height:100%; width:0; vertical-align:middle;}
+.panel{display:inline-block; width:200px; height:100px; background:#fff; vertical-align:middle;}
+</code></pre>
+<p>这样，就算在无法兼容<code>transform:translate()</code>的IE8上也能对宽高不固定的弹窗进行居中设置。</p>
+<blockquote>
+<p><a href="https://juejin.im/post/5909db2fda2f60005d2093db" target="_blank" rel="noopener">参考链接1</a><br><a href="https://segmentfault.com/a/1190000004466536" target="_blank" rel="noopener">参考链接2</a><br><a href="https://www.cnblogs.com/fsjohnhuang/p/5259121.html" target="_blank" rel="noopener">参考链接3</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+            <a href="/tags/CSS/" rel="tag"># CSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/30/BFC/" rel="next" title="BFC学习笔记">
+                <i class="fa fa-chevron-left"></i> BFC学习笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/23/记一次项目重构/" rel="prev" title="记一次项目重构">
+                记一次项目重构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">摩西小海员</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/MmmmyPh" target="_blank" title="GitHub"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:MmmmyPh@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IFC概念与形成"><span class="nav-number">1.</span> <span class="nav-text">IFC概念与形成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#line-height"><span class="nav-number">2.</span> <span class="nav-text">line-height</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vertical-align"><span class="nav-number">3.</span> <span class="nav-text">vertical-align</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IFC应用"><span class="nav-number">4.</span> <span class="nav-text">IFC应用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">摩西小海员</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script><!-- hexo-inject:begin --><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-less.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-jsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-tsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-markdown.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/highlight-keywords/prism-highlight-keywords.min.js'></script><!-- hexo-inject:end -->
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

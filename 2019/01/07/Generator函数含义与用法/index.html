@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_128.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16.png?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。">
+<meta name="keywords" content="学习笔记,JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generator函数含义与用法">
+<meta property="og:url" content="http://yoursite.com/2019/01/07/Generator函数含义与用法/index.html">
+<meta property="og:site_name" content="Nachteule">
+<meta property="og:description" content="自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-23T09:37:20.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Generator函数含义与用法">
+<meta name="twitter:description" content="自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/07/Generator函数含义与用法/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Generator函数含义与用法 | Nachteule</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.css'><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nachteule</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/07/Generator函数含义与用法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="摩西小海员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nachteule">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Generator函数含义与用法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-07 17:37:07" itemprop="dateCreated datePublished" datetime="2019-01-07T17:37:07+08:00">2019-01-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-23 17:37:20" itemprop="dateModified" datetime="2019-07-23T17:37:20+08:00">2019-07-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>自从开始使用React+Redux+Redux-Saga后，在Saga里Generator函数用的很多，回过头想想，对Generator貌似没有一个很系统的理解。那么这次就稍微整理一下笔记吧。</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>Generator的目的，是让我们能够以更像编写同步代码的方式，完成异步代码的编写，与此同时，相比回调函数和Promise，Generator最大的优势是，在处理多个串行异步任务时，能够保证异步动作能够按照我们想要的方式依次进行，又不至于如使用回调函数那般陷入回调地狱。</strong></p>
+<h1 id="JavaScript异步"><a href="#JavaScript异步" class="headerlink" title="JavaScript异步"></a>JavaScript异步</h1><p>对于单线程的JS来说，异步显得尤为重要，简单总结异步，就是将一个可能非常耗时或者类似请求的任务分成两段，先执行第一段，转而执行其他任务，等准被完毕后，再回头执行第二段。在 Generator 出来之前，JS中的异步操作主要有下面几种方式：</p>
+<ul>
+<li><p>回调函数</p>
+</li>
+<li><p>事件监听</p>
+</li>
+<li><p>发布/订阅</p>
+</li>
+<li><p>Promise</p>
+</li>
+</ul>
+<h2 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h2><p>考虑一个例子来理解回调：</p>
+<blockquote>
+<p>你到一个商店买东西，刚好要的东西没货，于是你在店员那儿留下你的联系电话，然后离开去做别的事情；过了几天店里有货了，店员给打了电话给你，然后你就去店里取货。</p>
+</blockquote>
+<p>在这个例子里，你的电话号码就是<strong>回调函数</strong>，你把你的电话留给店员，叫做<strong>登记回调函数</strong>，店里有货了，叫做<strong>触发回调关联的事件</strong>，店员给你打电话，叫做<strong>触发回调函数</strong>，你去店里取货，叫做<strong>响应回调事件</strong></p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">fs.readFile(&#39;.&#x2F;fs-example.js&#39;, function (err, data) {
+  if (err) throw err;
+  console.log(data);
+});
+</code></pre>
+<p>上面代码中，<code>readFile</code>函数的第二个参数，就是回调函数，也就是任务的第二段。等到操作系统返回了<code>fs-example.js</code>这个文件以后，回调函数才会执行。</p>
+<h2 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h2>
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">let readFile = require(&#39;fs-readfile-promise&#39;);
+
+readFile(fileA)
+.then(function(data){
+  console.log(data.toString());
+})
+.then(function(){
+  return readFile(fileB);
+})
+.then(function(data){
+  console.log(data.toString());
+})
+.catch(function(err) {
+  console.log(err);
+});
+</code></pre>
+<h2 id="问题所在"><a href="#问题所在" class="headerlink" title="问题所在"></a>问题所在</h2><p>回调函数本身没有问题，问题在于，当需要写一系列的需要按照次序进行的异步操作时，会出现一个令人恶心的回调地狱。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">fs.readFile(&#39;.&#x2F;a.js&#39;, function (err, data) {
+  fs.readFile(&#39;.&#x2F;b.js&#39;, function (err, data) {
+    ...
+  });
+});
+</code></pre>
+<p>虽然不太常见，但是可以想象，当出现多重嵌套时，代码横向发展乱成一团。</p>
+<p>Promise的出现就是为了解决这个问题，让代码纵向发展，但是Promise的写法也导致了如果出现一系列有次序的异步操作，会出现一大堆的then，并且有很多的代码冗余。</p>
+<h1 id="Generator"><a href="#Generator" class="headerlink" title="Generator"></a>Generator</h1><blockquote>
+<p>Generator出现的目标是用更像同步编程的方式实现异步编程的目标，更重要的是，Generator可以以同步编程的方式，让异步编程按照我们想要的次序依次进行，即，在前一个异步完成后，再调用后一个异步动作，并同时不至于陷入回调地狱。</p>
+<p>Generator可以暂停、恢复函数执行，且能够实现函数内外的数据交换和错误处理，这三点一起构成了一个异步编程的完整解决方案。</p>
+</blockquote>
+<h2 id="基本概念与暂停、恢复执行"><a href="#基本概念与暂停、恢复执行" class="headerlink" title="基本概念与暂停、恢复执行"></a>基本概念与暂停、恢复执行</h2><p>Generator可以理解成一个状态机，用<code>yield</code>关键字分割定义了内部不同的状态，形式上是一个用星号在<code>function</code>关键字和函数名之间标识,以示与普通函数的区别。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function* gen(){
+  yield &#39;hello&#39;
+  yield &#39;generator&#39;
+  return
+}
+
+let g = gen()
+g.next()
+g.next()
+</code></pre>
+<p>上面的代码中，<code>gen</code>就是一个Generator函数，调用<code>gen</code>函数返回的是一个<strong>遍历器对象</strong>。</p>
+<p>需要注意的是，执行这个函数并不会执行函数内部的逻辑，只有在第一次调用<code>g.next()</code>的时候，才会开始执行函数内部的逻辑，遇到<code>yield</code>关键字，暂停这一次执行，交出函数的执行权。</p>
+<p>用<code>yield</code>关键字暂停执行，用遍历器对象的<code>next</code>方法来恢复执行，这是Generator函数能够用来封装异步方法的根本原因。</p>
+<h2 id="函数体内外的数据交换"><a href="#函数体内外的数据交换" class="headerlink" title="函数体内外的数据交换"></a>函数体内外的数据交换</h2><p>Generator函数有着完整的函数体内外数据的交换机制。</p>
+<p><code>next</code>方法返回一个包含了<code>value</code>和<code>done</code>属性的对象,<code>value</code>属性是Generator函数向外输出数据的途径；</p>
+<p>同时，<code>next</code>方法还可以接受参数，用来作为上一个<code>yield</code>关键字暂停函数，重新启动时跟在上一个<code>yield</code>后的表达式的返回值，这是向Generator函数输入数据的途径。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function* gen(x){
+  let y = yield x * 2
+  return y
+}
+let g = gen(3)
+let z = g.next() &#x2F;&#x2F; {value: 6, done: false}
+g.next(3) &#x2F;&#x2F; {value: 3, done: true}
+</code></pre>
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><p>Generator函数内部还可以部署错误处理代码，用来捕获处理<strong>函数体外</strong>抛出的错误。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function* gen(x){
+  try {
+    let y = yield x + 2;
+  } catch (error) {
+    console.log(error);
+  }
+}
+let g = gen(3)
+g.next()  &#x2F;&#x2F; {value: 5, done: false}
+g.throw(&#39;error&#39;) &#x2F;&#x2F; error
+</code></pre>
+<p>在函数体外使用了<code>g.throw</code>抛出错误后，会被函数体内的<code>try...catch</code>捕获；</p>
+<p>如果<code>try</code>代码块内有多个<code>yield</code>，使用<code>g.throw</code>都会跳过所有未执行到的<code>yield</code>表达式，并且自动执行<code>try...catch</code>代码块后的一条<code>yield</code>表达式，如果没有，则会将<code>done</code>设置为<code>true</code>(即<code>g.throw</code>的执行附带执行一次<code>g.next</code>)；</p>
+<p>后续如果继续用<code>g.throw</code>抛出错误，将不再被Generator函数捕获，需要在外部进行错误捕获。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function* gen(x){
+  try {
+    let y = yield x + 2;
+    let z = yield 333;
+    let i = yield 444
+  } catch (error) {
+    console.log(error);
+  }
+
+  let j = yield 55555
+  let k = yield 6666
+}
+
+let g5 = gen(1)
+g5.next() &#x2F;&#x2F; {value: 3, done: false}
+g5.throw(&#39;err&#39;) &#x2F;&#x2F; err
+g5.next() &#x2F;&#x2F; {value: 6666, done: false}
+</code></pre>
+<p>以下几种情况，用<code>g.throw</code>抛出的错误会被外部<code>try...catch</code>代码块捕获：</p>
+<ol>
+<li><p>Generator内部没有部署<code>try...catch</code>代码块</p>
+</li>
+<li><p>在实例化了Generator后，没有执行<code>g.next</code>直接使用<code>g.throw</code>抛出错误。这是因为，实例化Generator不代表Generator内部代码逻辑开始执行，只有在第一次执行了<code>g.next</code>方法后，才启动了Generator内部的逻辑</p>
+</li>
+</ol>
+<p>如果在Generator内部没有部署<code>try...catch</code>代码，那么在Generator内部抛出的错误也将会被外部捕获：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function* foo() {
+  let x = yield 3
+  let y = x.toUpperCase()
+  yield y
+}
+
+let it = foo()
+
+it.next(); &#x2F;&#x2F; {value:3, done: false}
+
+try {
+  it.next(42)
+} catch (err) {
+  console.log(err)
+}
+it.next(3) &#x2F;&#x2F; {value: undefined, done: true}
+</code></pre>
+<p><code>it.next(42)</code>传入的数值42不具有<code>toUpperCase</code>方法，因此会抛出TypeError错误被函数体外的<code>try...catch</code>捕获。</p>
+<p>同时，如果一旦在Generator中抛出错误，且未被内部捕获，那么整个Generator将会被标记为<code>done:true</code>，接下来再执行<code>g.next()</code>也只会得到<code>{value: undefined, done: true}</code></p>
+<h2 id="Generator对异步任务封装"><a href="#Generator对异步任务封装" class="headerlink" title="Generator对异步任务封装"></a>Generator对异步任务封装</h2>
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">let fetch = require(&#39;node-fetch&#39;)
+
+function* genFetch(){
+  let url = &#39;https:&#x2F;&#x2F;api.github.com&#x2F;users&#x2F;github&#39;
+  let result = yield fetch(url)
+  console.log(result)
+}
+
+let g = genFetch()
+let result = g.next()
+result.value.then((data) =&gt; {
+  return data.json()
+}).then((json) =&gt; {
+  g.next(json)
+})
+</code></pre>
+<p>用Generator函数封装了一个异步动作，执行<code>genFetch</code>返回一个遍历器对象后，使用<code>g.next()</code>开启异步第一段；<code>fetch</code>返回一个Promise对象，所以在<code>then</code>中进行数据的解析，并用<code>g.next()</code>开始异步任务的第二段。</p>
+<p>逻辑很清晰，但是流程管理看起来很复杂，也会对理解代码造成负担。</p>
+<h1 id="Thunk函数"><a href="#Thunk函数" class="headerlink" title="Thunk函数"></a>Thunk函数</h1><p>Thunk函数是对<strong>传名调用</strong>的一个实现：将传入函数的表达式，放入一个临时函数中，再将临时函数传入目标函数中，函数中用到表达式的地方都用调用这个临时函数来替代。</p>
+<p>这个临时函数，就是Thunk函数。</p>
+<p>在JavaScript是使用传值调用的语言，对于JS来说，Thunk函数替换的是多参数函数，将多参数函数替换成一个只接受回调函数的单参数函数。</p>
+<h2 id="简单的Thunk函数转换器"><a href="#简单的Thunk函数转换器" class="headerlink" title="简单的Thunk函数转换器"></a>简单的Thunk函数转换器</h2><p>将一个多参数函数，转换成一个只接受回调函数的Thunk函数：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">const Thunkify = function(fn) {
+  return function (...args) {
+    return function (callBack) {
+      return fn.call(null, ...args, callBack)
+    }
+  }
+}
+</code></pre>
+<h2 id="Thunkify模块"><a href="#Thunkify模块" class="headerlink" title="Thunkify模块"></a>Thunkify模块</h2><p>有一个现成的Thunkify模块，在之前的简单的Thunk转换函数的基础上还增加了对回调函数调用次数的限制判断，保证回调函数只会执行一次。</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function thunkify(fn) {
+  return function () {
+    &#x2F;&#x2F; 创建一个数组，用于存放多参数函数除了回调函数以外其他所有函数
+    var args = new Array(arguments.length)
+    &#x2F;&#x2F; 获取上下文环境，用于后面绑定执行上下文
+    var ctx = this
+
+    &#x2F;&#x2F; 将函数参数放到数组的对应位置
+    for(var i = 0; i &lt; arguments.length; i++){
+      args[i] = arguments[i]
+    }
+
+    &#x2F;&#x2F; fn.apply(ctx, args)
+    &#x2F;&#x2F; 对fn的执行函数不能放在这里
+    &#x2F;&#x2F; 因为对于异步任务，回调函数只有在主线程有空了的情况下才会执行，所以当fn.apply()放在这里，
+    &#x2F;&#x2F; 异步函数能够确保流程控制函数被作为回调函数的内容注入后，回调函数才会执行
+    &#x2F;&#x2F; 而同步函数则不能，传给同步函数的回调函数，会在流程控制函数注入前就立刻执行，之后再注入控制函数就实效了
+    &#x2F;&#x2F; 因此要将异步任务的执行时机延后
+
+    return function (cb) {
+      &#x2F;&#x2F; 定义一个是否执行的flag
+      var called
+      &#x2F;&#x2F; 在参数数组中压入回调函数，并用flag保证回调只执行一次
+      args.push(function(){
+        if(call) return
+        called = true
+        cb.apply(null, arguments)
+      })
+
+      &#x2F;&#x2F; 在try...catch模块中执行函数，捕获错误后也将错误信息传入回调函数中
+      try{
+        &#x2F;&#x2F; 整个函数的执行被定义在传入了回调函数之后，这是为了兼容Thunk化的同步任务
+        fn.apply(ctx, args)
+      }catch (err) {
+        cb(err)
+      }
+    }
+  }
+}
+</code></pre>
+<p>应用：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function f(a, b, cb){
+  let sum = a + b;
+  cb(sum);
+  cb(sum);
+}
+
+let ft = thunkify(f);
+let print = console.log.bind(console);
+ft(1, 2)(print);
+</code></pre>
+<p>上面那段代码中，只会有一次输出。而如果直接调用函数<code>f</code>，则会有两次输出。</p>
+<h2 id="基于Thunk函数的Generator函数自动流程"><a href="#基于Thunk函数的Generator函数自动流程" class="headerlink" title="基于Thunk函数的Generator函数自动流程"></a>基于Thunk函数的Generator函数自动流程</h2><p>一般意义上来说，Thunk函数是没有什么实际作用的，但是当需要对Generator函数进行自动执行的管理时，Thunk函数就有了大用处。</p>
+<p>例如下面这个按照次序读取文件Generator函数：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">&#x2F;&#x2F; 模拟文件
+const file = {
+  &#39;file1.txt&#39;: &quot;file2.txt&quot;,
+  &#39;file2.txt&#39;: &#39;Hello, Generator!&#39;
+};
+
+&#x2F;&#x2F; 模拟读取文件操作
+function readFile(filename, cb) {
+  setTimeout(function() {
+    cb(null, file[filename]);
+  }, 1000)
+}
+
+&#x2F;&#x2F; 用之前的thunkify模块将 readFile 函数转化为一个 Thunk 函数
+const readFileThunk = thunkify(readFile)
+
+function* readGen() {
+  &#x2F;&#x2F; 读取 file1 的内容
+  const f1 = yield readFile(&#39;file1.text&#39;)
+  &#x2F;&#x2F; 用读取到的 file1 内容作为下一个文件名，读取 file2 的内容
+  const f2 = yield readFile(f1)
+  console.log(f2)
+}
+</code></pre>
+<p>手动执行上面这个Generator函数：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">let read = readGen()
+let file1 = read.next()
+
+file1.value(function (err, data){
+  if(err) throw err
+  let file2 = read.next(data)
+  file2.value(function (err, data){
+    if(err) throw err
+    read.next(data)
+  })
+})
+</code></pre>
+<p>仔细观察上面手动执行的逻辑：对整个Generator函数的调用执行的过程，就是向<code>read.next</code>调用返回的<code>value</code>属性（由于<code>readFile</code>函数经过Thunk转换，调用返回的是一个函数）传入同一个回调函数的过程。</p>
+<p>那么，在此基础上，就可以进行自动执行逻辑的编写了：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-javaScript">function run(gen) {
+  let g = gen()
+
+  function next(err, data) {
+    let result = g.next()
+    if(result.done) return
+    result.value(next)
+  }
+
+  next()
+}
+
+function* genFunc(){
+  ...
+}
+
+run(genFunc)
+</code></pre>
+<p><strong>注意：能够使用自动执行模块的Generator函数，其内部包含的异步函数，都需要经过Thunk化转化为一个Thunk函数：执行一次后返回一个接收回调函数的函数。</strong></p>
+<h2 id="基于Promise的自动执行"><a href="#基于Promise的自动执行" class="headerlink" title="基于Promise的自动执行"></a>基于Promise的自动执行</h2><p>基于Promise的自动执行，与基于Thunk函数的类似，只不过，基于Promise的自动执行要求Generator函数中，跟随在<code>yield</code>关键字后的异步动作，返回的必须是一个Promise对象，然后不是直接调用回调函数，而是<code>then</code>方法，层层回调。</p>
+<h1 id="co模块"><a href="#co模块" class="headerlink" title="co模块"></a>co模块</h1><p><a href="https://github.com/tj/co" target="_blank" rel="noopener">co模块</a>合并了Thunk函数和Promise两种模式，源码很精炼，给人启发很多。</p>
+<p>立个flag，之后要去再研究研究co的源码，写一些总结。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/08/CRA2-1-1自定义配置/" rel="next" title="CRA2.1.1自定义配置">
+                <i class="fa fa-chevron-left"></i> CRA2.1.1自定义配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/JavaScript函数柯里化/" rel="prev" title="JavaScript函数柯里化">
+                JavaScript函数柯里化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">摩西小海员</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/MmmmyPh" target="_blank" title="GitHub"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:MmmmyPh@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JavaScript异步"><span class="nav-number">1.</span> <span class="nav-text">JavaScript异步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#回调函数"><span class="nav-number">1.1.</span> <span class="nav-text">回调函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Promise"><span class="nav-number">1.2.</span> <span class="nav-text">Promise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题所在"><span class="nav-number">1.3.</span> <span class="nav-text">问题所在</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Generator"><span class="nav-number">2.</span> <span class="nav-text">Generator</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念与暂停、恢复执行"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念与暂停、恢复执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数体内外的数据交换"><span class="nav-number">2.2.</span> <span class="nav-text">函数体内外的数据交换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错误处理"><span class="nav-number">2.3.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generator对异步任务封装"><span class="nav-number">2.4.</span> <span class="nav-text">Generator对异步任务封装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Thunk函数"><span class="nav-number">3.</span> <span class="nav-text">Thunk函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单的Thunk函数转换器"><span class="nav-number">3.1.</span> <span class="nav-text">简单的Thunk函数转换器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thunkify模块"><span class="nav-number">3.2.</span> <span class="nav-text">Thunkify模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Thunk函数的Generator函数自动流程"><span class="nav-number">3.3.</span> <span class="nav-text">基于Thunk函数的Generator函数自动流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Promise的自动执行"><span class="nav-number">3.4.</span> <span class="nav-text">基于Promise的自动执行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#co模块"><span class="nav-number">4.</span> <span class="nav-text">co模块</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">摩西小海员</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script><!-- hexo-inject:begin --><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-less.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-jsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-tsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-markdown.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/highlight-keywords/prism-highlight-keywords.min.js'></script><!-- hexo-inject:end -->
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

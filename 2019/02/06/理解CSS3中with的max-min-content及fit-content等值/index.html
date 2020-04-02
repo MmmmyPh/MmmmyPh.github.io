@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_128.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32.png?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16.png?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Whaaa? 我又听说了CSS3里width有几个新的关键字成员？">
+<meta name="keywords" content="学习笔记,CSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解CSS3中with的max&#x2F;min-content及fit-content等值">
+<meta property="og:url" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/index.html">
+<meta property="og:site_name" content="Nachteule">
+<meta property="og:description" content="Whaaa? 我又听说了CSS3里width有几个新的关键字成员？">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/intrinsic&extrinsic-sizing.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/fill-available.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/max-content.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/min-content-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/min-content-2.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/fit-content.png">
+<meta property="og:updated_time" content="2019-07-23T09:37:20.849Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理解CSS3中with的max&#x2F;min-content及fit-content等值">
+<meta name="twitter:description" content="Whaaa? 我又听说了CSS3里width有几个新的关键字成员？">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/intrinsic&extrinsic-sizing.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>理解CSS3中with的max/min-content及fit-content等值 | Nachteule</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.css'><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nachteule</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="摩西小海员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nachteule">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">理解CSS3中with的max/min-content及fit-content等值
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-06 21:19:06" itemprop="dateCreated datePublished" datetime="2019-02-06T21:19:06+08:00">2019-02-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-23 17:37:20" itemprop="dateModified" datetime="2019-07-23T17:37:20+08:00">2019-07-23</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Whaaa? 我又听说了CSS3里<code>width</code>有几个新的关键字成员？</p>
+</blockquote>
+<a id="more"></a>
+<p>上网看个文章，发现：Whaaa? 怎么又有新的属性了？再仔细看了看，额。。。事实上也不算新，挺早就有了，只不过之前不知道，而且基本都还属于实验性质的属性，说不准哪天删除了？</p>
+<p>但是既然看到了，而且好久没学习CSS了，那么该学还是得学习这几个属性：</p>
+<ul>
+<li><p><code>width: fill-available</code></p>
+</li>
+<li><p><code>width: max-content</code></p>
+</li>
+<li><p><code>width: min-content</code></p>
+</li>
+<li><p><code>width: fit-content</code></p>
+</li>
+</ul>
+<h1 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h1><p>这一套新的<a href="https://caniuse.com/#feat=intrinsic-width" target="_blank" rel="noopener">兼容性</a>目前来说，在PC端的Chrome和Firefox都已经能够较好地支持，IE系的就不看了，Edge都要死了。。。而基本上在移动端已经可用很好地使用了。</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/intrinsic&extrinsic-sizing.png" title="Intrinsic&Extrinsic Sizing">
+<p>但是如果真的要在实际生产中使用，还是需要加入浏览起私有前缀会更稳妥：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-CSS">.min-content {
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+}
+</code></pre>
+<h1 id="width-fill-available"><a href="#width-fill-available" class="headerlink" title="width: fill-available"></a>width: fill-available</h1><p><code>width: fill-available</code>，从字面即可看出它的意义：填满当前元素所处父元素的可用空间。一个没有设置过任何其他样式<code>&lt;div&gt;</code>元素的<code>width</code>表现，天生就是<code>fill-available</code>的，即在横向上填满父元素的可用空间。</p>
+<p>那么，<code>width: fill-available</code>出现的意义在于，非<code>block</code>元素也可以在横向上填满父元素的可用空间。例如<code>inline-block</code>：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-CSS">.fill-available{
+  display: inline-block;
+  width: fill-available;
+}
+</code></pre>
+<p>设置了<code>width: fill-available</code>的<code>inline-block</code>元素，不再会按照自身的<strong>收缩包裹</strong>特性，在横向上缩小到自身内容的大小，而是会充满父元素的可用空间。</p>
+<p>这样，就让一个<code>inline-block</code>水平的元素，同时具有了自身在父元素中的<em>对齐定位特性</em>，以及块级元素的<em>自动填充特性</em>。例如，我们可以用一个<code>inline-block</code>元素来表现成一个垂直居中的块级元素：</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/fill-available.png" title="width:fill-available">
+<p>关键CSS代码：</p>
+
+<!-- Has Prism -->
+<pre class style><code class="language-CSS">.box {
+  height: 200px;
+  &#x2F;* 行高控制垂直居中 *&#x2F;
+  line-height: 200px;
+}
+
+.inline-block {
+  &#x2F;* inline-block元素，响应父元素行高及vertical-align控制 *&#x2F;
+  display: inline-block;
+  &#x2F;* 阻止继承父元素行高，以防文字显示问题 *&#x2F;
+  line-height: 20px;
+  &#x2F;* 元素垂直居中 *&#x2F;
+  vertical-align: middle;
+}
+
+.fill-available {
+  &#x2F;* 元素如同块级元素那般横向盛满 *&#x2F;
+  width: -webkit-fill-available;
+  width: -moz-fill-available;
+  width: -moz-available;    &#x2F;* FireFox目前这个生效 *&#x2F;
+  width: fill-available;
+}
+</code></pre>
+<h1 id="width-max-content"><a href="#width-max-content" class="headerlink" title="width: max-content"></a>width: max-content</h1><p><code>max-content</code>表示，采用当前元素内部的子元素<strong>宽度最大</strong>的那个子元素的宽度作为当前元素的宽度。如果元素子元素中有文本，那么将采用文本不换行时的文本元素宽度与其他子元素宽度进行比较，就如同设置了<code>white-space: no-wrap</code>一样。</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/max-content.png" title="width:max-content">
+<p>可以在上图中看到，设置了<code>width:max-content</code>的元素，对于内部元素中两行文本，采用了<strong>不换行后最长的</strong>那一行文本的宽度作为自身宽度。如果将其中的某一个文本替换成例如<code>img</code>等，也是同样的道理。</p>
+<h1 id="width-min-content"><a href="#width-min-content" class="headerlink" title="width: min-content"></a>width: min-content</h1><p><code>min-content</code>单从字面理解，可能会误认为是采用宽度最小的那个子元素的宽度，但是其实是,采用内部元素<strong>最小宽度最大的</strong>那个元素的宽度值,作为容器元素的宽度。</p>
+<blockquote>
+<p>最小宽度值：对于替换元素，例如图片,最小宽度值就是图片呈现的宽度。对于文本元素，如果文本全是中文，那么就是一个中文字符的宽度；如果包含英文在内，由于英文单词内不准换行，那么最小宽度值就是最长的那个英文单词的宽度。</p>
+</blockquote>
+<p>如果容器是块级元素，原先撑满父元素的容器元素会“收缩”到内部元素的最小宽度最大值那个宽度。如果容器是<code>inline-block</code>元素，也不会被内部元素给撑开,也会“固定收缩”到最小宽度最大值那个宽度。</p>
+<p>如果在其中加入图片元素，那么在图片与文字混合的这个容器元素中，容器会始终跟随图片的宽度进行自适应，这是一个之前比较难以实现的效果。</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/min-content-1.png" title="width:min-content-1">
+<p>上图采用<code>min-content</code>后，容器元素将跟随图片的宽度进行缩放，因为图片的宽度为640px，大于文本的最小宽度值。</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/min-content-2.png" title="width:min-content-2">
+<p>上图采用<code>min-content</code>后，容器元素针对纯文本内部元素，采用了或中文一个字符宽度，或英文单词宽度作为自身的宽度值。</p>
+<h1 id="width-fit-content"><a href="#width-fit-content" class="headerlink" title="width: fit-content"></a>width: fit-content</h1><p><code>width: fit-content</code>理解起来就是，收缩以适应内容:’shrink-to-fit’。这一特性，与在<code>float</code>,<code>absolute</code>以及<code>inline-block</code>身上的尺寸收缩特性的表现是一致的。</p>
+<p>如果说<code>width: fill-available</code>可以理解为让<code>inline-block</code>的内容在保持原先<code>inline-block</code>水平属性的同时，具有<code>block</code>元素撑满容器的特性。</p>
+<p>那么，<code>width: fit-content</code>就可以理解为，让<code>block</code>的内容在保持原先<code>block</code>水平属性的同时，具有<code>inline-block</code>元素的收缩效果，同时，也不至于如同<code>float</code>,<code>absolute</code>那样脱离普通文档流。</p>
+<p>下面一个图中的例子就是利用<code>fit-content</code>来实现元素的收缩，同时直接利用<code>margin: auto</code>来进行居中，也不需要担心会有其他元素在同一行跟在后面。</p>
+<p>如果要用<code>inline-block</code>的元素来实现同样效果，那么就需要在父元素中设置<code>text-align: center</code>来进行元素居中，同时自己还要设置<code>text-align: left</code>来保持文本的靠左。</p>
+<img src="/2019/02/06/理解CSS3中with的max-min-content及fit-content等值/fit-content.png" title="width:fit-content">
+<h1 id="展开"><a href="#展开" class="headerlink" title="展开"></a>展开</h1><h2 id="CSS2-1尺寸体系"><a href="#CSS2-1尺寸体系" class="headerlink" title="CSS2.1尺寸体系"></a>CSS2.1尺寸体系</h2><p>CSS2.1中常见的尺寸分为这几个：</p>
+<ol>
+<li><p>充分利用可用空间</p>
+<p> 比如<code>div</code>元素，默认宽度即是100%撑满父元素的宽度，这样就是充分利用空间：<code>fill-available</code>。</p>
+</li>
+<li><p>收缩与包裹</p>
+<p> 典型代表是<code>inline-block</code>、绝对定位，英文是’shrink-to-fit’(收缩到合适)。理解上可以理解为，收缩元素的宽度到“恰好包裹住”内部元素。现在可以用<code>fit-content</code>来形容。</p>
+</li>
+<li><p>收缩到最小</p>
+<p> 收缩到最小最典型的表现是<code>table-layout: auto</code>的<code>table</code>元素。如果<code>table</code>的父元素宽度不够，<code>table</code>的列数过多或者某些内容宽度过长，那么<code>th</code>,<code>td</code>中的文本就会被随意折行，英文最多折行到一个单词的大小，如果只有中文，那么最多就会把这一系列文本直接折行成每行只有一个中文。</p>
+<p> 这其实就是<code>min-content</code>的特性。</p>
+</li>
+<li><p>超出容器限制</p>
+<p> 一般情况下，除非特殊设置，子元素的宽度尺寸都不会超出父元素。但是对于连续的英文或数字，或者被设置了<code>white-space: nowrap</code>，那么在父元素宽度不够的时候，内容不会产生任何折行，这时，子元素宽度就会超出父元素的尺寸范围。</p>
+<p> 这一特性与<code>max-content</code>的表现类似</p>
+</li>
+</ol>
+<p>列举了上面四个发现，其实这四个新的<code>width</code>关键字表现的特性在CSS2.1中已经都有了，那么，明确地写成一个关键字最大的好处在于：<strong>帮助元素在原有的<code>display</code>水平下，实现其他<code>display</code>值才能够实现的特性</strong>，从而帮助更好地进行布局。</p>
+<h2 id="Intrinsic-amp-Extrinsic-Sizing"><a href="#Intrinsic-amp-Extrinsic-Sizing" class="headerlink" title="Intrinsic &amp; Extrinsic Sizing"></a>Intrinsic &amp; Extrinsic Sizing</h2><p>上面那张兼容性的图中的标题是<code>Intrinsic &amp; Extrinsic Sizing</code>,即<em>内部尺寸与外部尺寸</em>。</p>
+<ul>
+<li><p>内部尺寸：元素的尺寸由内部的子元素决定；</p>
+</li>
+<li><p>外部尺寸：元素的尺寸由外部的元素决定；</p>
+</li>
+</ul>
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>关于这几个属性写了一个<a href="https://jsfiddle.net/MmmmyPh/7q6nc5p4/52/" target="_blank" rel="noopener">小demo</a>，也加深自己的理解。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+            <a href="/tags/CSS/" rel="tag"># CSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/JavaScript函数柯里化/" rel="next" title="JavaScript函数柯里化">
+                <i class="fa fa-chevron-left"></i> JavaScript函数柯里化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/21/翻译-函数式组件与类组件有何不同？/" rel="prev" title="[翻译]函数式组件与类组件有何不同？">
+                [翻译]函数式组件与类组件有何不同？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">摩西小海员</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/MmmmyPh" target="_blank" title="GitHub"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:MmmmyPh@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#兼容性"><span class="nav-number">1.</span> <span class="nav-text">兼容性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#width-fill-available"><span class="nav-number">2.</span> <span class="nav-text">width: fill-available</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#width-max-content"><span class="nav-number">3.</span> <span class="nav-text">width: max-content</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#width-min-content"><span class="nav-number">4.</span> <span class="nav-text">width: min-content</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#width-fit-content"><span class="nav-number">5.</span> <span class="nav-text">width: fit-content</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#展开"><span class="nav-number">6.</span> <span class="nav-text">展开</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS2-1尺寸体系"><span class="nav-number">6.1.</span> <span class="nav-text">CSS2.1尺寸体系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Intrinsic-amp-Extrinsic-Sizing"><span class="nav-number">6.2.</span> <span class="nav-text">Intrinsic &amp; Extrinsic Sizing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Demo"><span class="nav-number">6.3.</span> <span class="nav-text">Demo</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">摩西小海员</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script><!-- hexo-inject:begin --><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-less.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-jsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-tsx.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-markdown.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/line-highlight/prism-line-highlight.min.js'></script><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/plugins/highlight-keywords/prism-highlight-keywords.min.js'></script><!-- hexo-inject:end -->
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
